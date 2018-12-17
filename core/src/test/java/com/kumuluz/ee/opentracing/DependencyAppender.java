@@ -21,36 +21,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 package com.kumuluz.ee.opentracing;
 
+import com.kumuluz.ee.testing.arquillian.spi.MavenDependencyAppender;
 
-import io.opentracing.Tracer;
-import io.opentracing.util.GlobalTracer;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Produces;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
 
 /**
- * OpenTracing Tracer producer
+ * Adds required dependencies to the deployments.
+ *
+ * @author Urban Malc
  * @author Domen Jeric
  * @since 1.0.0
  */
-@ApplicationScoped
-public class TracerProducer {
-    private Tracer tracer;
+public class DependencyAppender implements MavenDependencyAppender {
 
-    //TODO: refactor
-    public void setTracer(Tracer tracer) {
-        this.tracer = tracer;
-    }
+    private static final ResourceBundle versionsBundle = ResourceBundle.getBundle("META-INF/kumuluzee/opentracing/versions");
 
-    @Produces
-    public Tracer produceTracer() {
-        if (tracer != null) {
-            return tracer;
-        }
+    @Override
+    public List<String> addLibraries() {
 
-        return GlobalTracer.get();
+        List<String> libs = new ArrayList<>();
+
+        libs.add("com.kumuluz.ee:kumuluzee-jax-rs-jersey:");
+        libs.add("com.kumuluz.ee:kumuluzee-cdi-weld:");
+        libs.add("io.opentracing:opentracing-util:"  +
+                versionsBundle.getString("opentracing-version"));
+        libs.add("io.opentracing:opentracing-api:" +
+                versionsBundle.getString("opentracing-version"));
+        libs.add("io.opentracing:opentracing-mock:" +
+                versionsBundle.getString("opentracing-version"));
+        libs.add("org.eclipse.microprofile.opentracing:microprofile-opentracing-api:" +
+                versionsBundle.getString("microprofile-opentracing-version"));
+
+        return libs;
     }
 }

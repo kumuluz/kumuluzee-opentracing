@@ -21,36 +21,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 package com.kumuluz.ee.opentracing;
 
-
-import io.opentracing.Tracer;
-import io.opentracing.util.GlobalTracer;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Produces;
+import org.jboss.arquillian.container.test.spi.client.deployment.ApplicationArchiveProcessor;
+import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiveAppender;
+import org.jboss.arquillian.core.spi.LoadableExtension;
 
 /**
- * OpenTracing Tracer producer
+ * Registers {@link OpenTracingLibraryAppender} with the Arquillian.
+ *
+ * @author Urban Malc
  * @author Domen Jeric
  * @since 1.0.0
  */
-@ApplicationScoped
-public class TracerProducer {
-    private Tracer tracer;
+public class OpenTracingArquillianExtension implements LoadableExtension {
 
-    //TODO: refactor
-    public void setTracer(Tracer tracer) {
-        this.tracer = tracer;
-    }
-
-    @Produces
-    public Tracer produceTracer() {
-        if (tracer != null) {
-            return tracer;
-        }
-
-        return GlobalTracer.get();
+    @Override
+    public void register(ExtensionBuilder extensionBuilder) {
+        extensionBuilder
+                .service(AuxiliaryArchiveAppender.class, OpenTracingLibraryAppender.class)
+                .service(ApplicationArchiveProcessor.class, WebInfProcessor.class);
     }
 }

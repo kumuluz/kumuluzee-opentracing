@@ -21,36 +21,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 package com.kumuluz.ee.opentracing;
 
-
-import io.opentracing.Tracer;
-import io.opentracing.util.GlobalTracer;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Produces;
+import org.jboss.arquillian.container.test.spi.client.deployment.CachedAuxilliaryArchiveAppender;
+import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
 
 /**
- * OpenTracing Tracer producer
+ * Packages KumuluzEE OpenTracing library as a ShrinkWrap archive and adds it to deployments.
+ *
+ * @author Urban Malc
  * @author Domen Jeric
  * @since 1.0.0
  */
-@ApplicationScoped
-public class TracerProducer {
-    private Tracer tracer;
+public class OpenTracingLibraryAppender extends CachedAuxilliaryArchiveAppender {
 
-    //TODO: refactor
-    public void setTracer(Tracer tracer) {
-        this.tracer = tracer;
-    }
+    @Override
+    protected Archive<?> buildArchive() {
 
-    @Produces
-    public Tracer produceTracer() {
-        if (tracer != null) {
-            return tracer;
-        }
-
-        return GlobalTracer.get();
+        return ShrinkWrap.create(JavaArchive.class, "kumuluzee-opentracing.jar")
+                .addPackages(true, OpenTracingExtension.class.getPackage())
+                .addClass(TracerInitializer.class)
+                .addAsServiceProvider(com.kumuluz.ee.common.Extension.class, OpenTracingExtension.class)
+                .addAsResource("META-INF/beans.xml");
     }
 }

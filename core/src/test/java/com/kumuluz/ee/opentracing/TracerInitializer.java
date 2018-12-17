@@ -24,33 +24,38 @@
 
 package com.kumuluz.ee.opentracing;
 
-
 import io.opentracing.Tracer;
+import io.opentracing.mock.MockTracer;
 import io.opentracing.util.GlobalTracer;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Produces;
+import javax.enterprise.context.Initialized;
+import javax.enterprise.event.Observes;
+import javax.inject.Inject;
 
 /**
- * OpenTracing Tracer producer
+ * Initializes  OpenTracing tracer
  * @author Domen Jeric
  * @since 1.0.0
  */
 @ApplicationScoped
-public class TracerProducer {
-    private Tracer tracer;
+public class TracerInitializer {
 
-    //TODO: refactor
-    public void setTracer(Tracer tracer) {
-        this.tracer = tracer;
-    }
+    @Inject
+    TracerProducer tracerProducer;
 
-    @Produces
-    public Tracer produceTracer() {
-        if (tracer != null) {
-            return tracer;
+    public void init(@Observes @Initialized(ApplicationScoped.class) Object init) {
+
+        try {
+
+            Tracer tracer = new MockTracer();
+            GlobalTracer.register(tracer);
+            tracerProducer.setTracer(tracer);//TODO: refactor
+
+        } catch(Exception exception) {
+            exception.printStackTrace();
         }
 
-        return GlobalTracer.get();
     }
+
 }
