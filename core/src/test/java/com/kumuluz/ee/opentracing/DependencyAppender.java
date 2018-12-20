@@ -55,7 +55,9 @@ public class DependencyAppender implements MavenDependencyAppender {
                 versionsBundle.getString("opentracing-version"));
         libs.add("org.eclipse.microprofile.opentracing:microprofile-opentracing-api:" +
                 versionsBundle.getString("microprofile-opentracing-version"));
-
+        libs.add("javax.xml.bind:jaxb-api:2.3.0");
+        libs.add("com.kumuluz.ee.config:kumuluzee-config-mp:" +
+                versionsBundle.getString("kumuluzee-config-mp.version"));
         return libs;
     }
 }

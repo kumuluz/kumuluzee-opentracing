@@ -23,6 +23,7 @@
  */
 package com.kumuluz.ee.opentracing;
 
+import com.kumuluz.ee.opentracing.providers.ClientTracingProvider;
 import org.jboss.arquillian.container.test.spi.client.deployment.CachedAuxilliaryArchiveAppender;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -42,8 +43,9 @@ public class OpenTracingLibraryAppender extends CachedAuxilliaryArchiveAppender 
 
         return ShrinkWrap.create(JavaArchive.class, "kumuluzee-opentracing.jar")
                 .addPackages(true, OpenTracingExtension.class.getPackage())
-                .addClass(TracerInitializer.class)
+                .addClass(MockTracerInitializer.class)
                 .addAsServiceProvider(com.kumuluz.ee.common.Extension.class, OpenTracingExtension.class)
+                .addAsServiceProvider(org.eclipse.microprofile.opentracing.ClientTracingRegistrarProvider.class, ClientTracingProvider.class)
                 .addAsResource("META-INF/beans.xml");
     }
 }

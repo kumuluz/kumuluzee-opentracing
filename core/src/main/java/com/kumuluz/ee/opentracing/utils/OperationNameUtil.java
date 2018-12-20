@@ -70,11 +70,10 @@ public class OperationNameUtil {
     private String operationName(ContainerRequestContext requestContext, Class<?> clazz, Method method) {
         String operationNameProvider = this.operationNameProvider();
 
-        if (operationNameProvider != null && operationNameProvider.equals("class-method")) {
-            return this.operationNameClassMethod(requestContext, clazz, method);
+        if (operationNameProvider != null && operationNameProvider.equals("http-path")) {
+            return this.operationNameHttpPath(requestContext);
         }
-
-        return this.operationNameHttpPath(requestContext);
+        return this.operationNameClassMethod(requestContext, clazz, method);
     }
 
     private String operationNameProvider() {

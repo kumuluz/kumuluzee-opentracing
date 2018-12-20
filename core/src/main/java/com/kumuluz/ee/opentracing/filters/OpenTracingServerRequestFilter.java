@@ -35,7 +35,6 @@ import io.opentracing.SpanContext;
 import io.opentracing.Tracer;
 import io.opentracing.propagation.Format;
 import io.opentracing.tag.Tags;
-import io.opentracing.util.GlobalTracer;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -66,6 +65,9 @@ public class OpenTracingServerRequestFilter implements ContainerRequestFilter {
     @Inject
     OpenTracingConfig tracerConfig;
 
+    @Inject
+    Tracer tracer;
+
     private static final Logger LOG = Logger.getLogger(OpenTracingServerRequestFilter.class.getName());
 
     public void filter(ContainerRequestContext requestContext) {
@@ -81,7 +83,6 @@ public class OpenTracingServerRequestFilter implements ContainerRequestFilter {
 
         String operationName = operationNameUtil.operationName(requestContext, resourceInfo);
 
-        Tracer tracer = GlobalTracer.get();
         Tracer.SpanBuilder spanBuilder;
 
         try {

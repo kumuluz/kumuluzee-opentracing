@@ -30,9 +30,9 @@ import io.opentracing.Span;
 import io.opentracing.Tracer;
 import io.opentracing.propagation.Format;
 import io.opentracing.tag.Tags;
-import io.opentracing.util.GlobalTracer;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.ext.Provider;
@@ -51,11 +51,11 @@ public class OpenTracingClientRequestFilter implements ClientRequestFilter {
 
     private static final Logger LOG = Logger.getLogger(OpenTracingClientRequestFilter.class.getName());
 
+    @Inject
+    Tracer tracer;
+
     @Override
     public void filter(ClientRequestContext requestContext) {
-
-        Tracer tracer = GlobalTracer.get();
-
         try {
             URI uri = requestContext.getUri();
 

@@ -26,31 +26,25 @@ package com.kumuluz.ee.opentracing;
 
 
 import io.opentracing.Tracer;
-import io.opentracing.util.GlobalTracer;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
+import javax.servlet.ServletContext;
 
 /**
  * OpenTracing Tracer producer
  * @author Domen Jeric
+ * @author Domen Kajdic
  * @since 1.0.0
  */
 @ApplicationScoped
 public class TracerProducer {
-    private Tracer tracer;
-
-    //TODO: refactor
-    public void setTracer(Tracer tracer) {
-        this.tracer = tracer;
-    }
+    @Inject
+    private ServletContext servletContext;
 
     @Produces
     public Tracer produceTracer() {
-        if (tracer != null) {
-            return tracer;
-        }
-
-        return GlobalTracer.get();
+        return (Tracer)servletContext.getAttribute("tracer");
     }
 }

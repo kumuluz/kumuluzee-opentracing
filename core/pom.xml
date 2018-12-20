@@ -65,5 +65,12 @@
             <artifactId>opentracing-api</artifactId>
             <version>${opentracing.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.kumuluz.ee.config</groupId>
+            <artifactId>kumuluzee-config-mp</artifactId>
+            <version>${kumuluzee-config-mp.version}</version>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 </project>
