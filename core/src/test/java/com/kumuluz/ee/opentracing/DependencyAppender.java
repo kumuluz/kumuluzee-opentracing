@@ -62,7 +62,7 @@ public class DependencyAppender implements MavenDependencyAppender {
         libs.add("io.opentracing.contrib:opentracing-concurrent:" +
                 versionsBundle.getString("opentracing-concurrent.version"));
         libs.add("javax.xml.bind:jaxb-api:" +
-                versionsBundle.getString(" jaxb-api.version"));
+                versionsBundle.getString("jaxb-api.version"));
 
         return libs;
     }

@@ -24,8 +24,6 @@
 
 package com.kumuluz.ee.opentracing.filters;
 
-
-
 import com.kumuluz.ee.opentracing.utils.OpenTracingUtil;
 import com.kumuluz.ee.opentracing.utils.SpanErrorLogger;
 import io.opentracing.Span;

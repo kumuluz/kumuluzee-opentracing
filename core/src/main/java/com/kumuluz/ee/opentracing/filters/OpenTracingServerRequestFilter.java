@@ -42,7 +42,6 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.Provider;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -100,7 +99,7 @@ public class OpenTracingServerRequestFilter implements ContainerRequestFilter {
                     .withTag(Tags.SPAN_KIND.getKey(), Tags.SPAN_KIND_SERVER)
                     .withTag(Tags.HTTP_METHOD.getKey(), requestContext.getMethod())
                     .withTag(Tags.HTTP_URL.getKey(),
-                            requestContext.getUriInfo().getBaseUri().toString() + requestContext.getUriInfo().getPath())
+                            requestContext.getUriInfo().getRequestUri().toString())
                     .withTag(Tags.COMPONENT.getKey(), "jaxrs");
 
             requestContext.setProperty(OpenTracingUtil.OPENTRACING_SPAN_TITLE,
