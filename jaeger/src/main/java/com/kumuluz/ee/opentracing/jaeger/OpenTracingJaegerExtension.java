@@ -22,14 +22,36 @@
  * SOFTWARE.
  */
 
-package com.kumuluz.ee.opentracing.config;
+package com.kumuluz.ee.opentracing.jaeger;
+
+import com.kumuluz.ee.common.Extension;
+import com.kumuluz.ee.common.config.EeConfig;
+import com.kumuluz.ee.common.dependencies.EeComponentDependency;
+import com.kumuluz.ee.common.dependencies.EeComponentType;
+import com.kumuluz.ee.common.dependencies.EeExtensionDef;
+import com.kumuluz.ee.common.wrapper.KumuluzServerWrapper;
+import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
 
 /**
- * OpenTracing config interface
- * @author Domen Jeric
+ * OpenTracingJaegerExtension class
+ *
+ * @author Domen Kajdic
  * @since 1.0.0
  */
-public interface OpenTracingConfigInterface {
-    String getReporterHost();
-    int getReporterPort();
+@EeExtensionDef(name = "OpenTracing Jaeger", group = "OPENTRACING")
+@EeComponentDependency(EeComponentType.SERVLET)
+@EeComponentDependency(EeComponentType.CDI)
+public class OpenTracingJaegerExtension implements Extension {
+
+    @Override
+    public void load() {
+    }
+
+    @Override
+    public void init(KumuluzServerWrapper kumuluzServerWrapper, EeConfig eeConfig) {}
+
+    @Override
+    public boolean isEnabled() {
+        return ConfigurationUtil.getInstance().getBoolean("kumuluzee.opentracing.enabled").orElse(true);
+    }
 }

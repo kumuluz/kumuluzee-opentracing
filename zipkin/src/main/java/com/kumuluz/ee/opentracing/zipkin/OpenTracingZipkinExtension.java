@@ -22,27 +22,36 @@
  * SOFTWARE.
  */
 
-package com.kumuluz.ee.opentracing;
+package com.kumuluz.ee.opentracing.zipkin;
 
-import com.kumuluz.ee.opentracing.utils.JaegerTracingUtil;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.Initialized;
-import javax.enterprise.event.Observes;
-import javax.inject.Inject;
+import com.kumuluz.ee.common.Extension;
+import com.kumuluz.ee.common.config.EeConfig;
+import com.kumuluz.ee.common.dependencies.EeComponentDependency;
+import com.kumuluz.ee.common.dependencies.EeComponentType;
+import com.kumuluz.ee.common.dependencies.EeExtensionDef;
+import com.kumuluz.ee.common.wrapper.KumuluzServerWrapper;
+import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
 
 /**
- * OpenTracing initiator
- * @author Domen Jeric
+ * OpenTracingZipkinExtension class
+ *
+ * @author Domen Kajdic
  * @since 1.0.0
  */
-@ApplicationScoped
-public class JaegerTracingInitiator {
+@EeExtensionDef(name = "OpenTracing Zipkin", group = "OPENTRACING")
+@EeComponentDependency(EeComponentType.SERVLET)
+@EeComponentDependency(EeComponentType.CDI)
+public class OpenTracingZipkinExtension implements Extension {
 
-    @Inject
-    private JaegerTracingUtil jaegerTracer;
+    @Override
+    public void load() {
+    }
 
-    private void initialize(@Observes @Initialized(ApplicationScoped.class) Object init) {
-        jaegerTracer.init();
+    @Override
+    public void init(KumuluzServerWrapper kumuluzServerWrapper, EeConfig eeConfig) {}
+
+    @Override
+    public boolean isEnabled() {
+        return ConfigurationUtil.getInstance().getBoolean("kumuluzee.opentracing.enabled").orElse(true);
     }
 }

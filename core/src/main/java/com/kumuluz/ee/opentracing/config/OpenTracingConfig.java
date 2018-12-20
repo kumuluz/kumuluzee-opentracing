@@ -24,7 +24,6 @@
 
 package com.kumuluz.ee.opentracing.config;
 
-import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
 import org.eclipse.microprofile.config.ConfigProvider;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -39,15 +38,7 @@ import java.util.regex.Pattern;
  */
 @ApplicationScoped
 public class OpenTracingConfig {
-
-    private static final String DEFAULT_SERVICE_NAME = "KumuluzEE Project";
     private static final String MP_CONFIG_PREFIX = "mp.opentracing.";
-
-    public String getServiceName() {
-        return ConfigurationUtil.getInstance()
-                .get("kumuluzee.name")
-                .orElse(DEFAULT_SERVICE_NAME);
-    }
 
     public String getSelectedOperationNameProvider() {
         Optional<String> nameProvider = ConfigProvider.getConfig()

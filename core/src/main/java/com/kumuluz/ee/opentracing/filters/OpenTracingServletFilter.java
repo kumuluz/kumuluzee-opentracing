@@ -27,6 +27,7 @@ package com.kumuluz.ee.opentracing.filters;
 import com.kumuluz.ee.opentracing.utils.OpenTracingUtil;
 import com.kumuluz.ee.opentracing.utils.SpanErrorLogger;
 import io.opentracing.Span;
+import io.opentracing.tag.Tags;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.servlet.*;
@@ -61,6 +62,8 @@ public class OpenTracingServletFilter implements Filter {
             }
 
             HttpServletResponse httpResponse = (HttpServletResponse) response;
+
+            span.setTag(Tags.HTTP_STATUS.getKey(), httpResponse.getStatus());
 
             if (httpResponse.getStatus() >= 500) {
                 SpanErrorLogger.addExceptionLogs(span, e);

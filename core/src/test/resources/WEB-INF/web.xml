@@ -19,12 +19,23 @@
 
         <init-param>
             <param-name>jersey.config.server.provider.classnames</param-name>
-            <param-value>com.kumuluz.ee.opentracing.filters.OpenTracingServerRequestFilter;com.kumuluz.ee.opentracing.filters.OpenTracingServerResponseFilter;com.kumuluz.ee.opentracing.filters.OpenTracingServletFilter</param-value>
+            <param-value>com.kumuluz.ee.opentracing.filters.OpenTracingServerRequestFilter;com.kumuluz.ee.opentracing.filters.OpenTracingServerResponseFilter</param-value>
         </init-param>
 
         <load-on-startup>1</load-on-startup>
         <async-supported>true</async-supported>
     </servlet>
+
+    <filter>
+        <filter-name>error-filter</filter-name>
+        <filter-class>com.kumuluz.ee.opentracing.filters.OpenTracingServletFilter</filter-class>
+        <async-supported>true</async-supported>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>error-filter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 
     <servlet-mapping>
         <servlet-name>TckApp</servlet-name>
