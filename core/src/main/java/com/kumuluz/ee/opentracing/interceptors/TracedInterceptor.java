@@ -40,6 +40,7 @@ import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
 import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.core.Response;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -71,7 +72,8 @@ public class TracedInterceptor {
         ContainerRequestContext requestContext = RequestContextHolder.getRequestContext();
 
         if (ExplicitTracingUtil.tracingDisabled(context) ||
-                requestContext != null && ExplicitTracingUtil.pathMatchesSkipPattern(requestContext.getUriInfo(), skipPattern)) {
+            requestContext != null && ExplicitTracingUtil.pathMatchesSkipPattern(requestContext.getUriInfo(), skipPattern) ||
+            context.getMethod().getReturnType().equals(Response.class)) {
             return context.proceed();
         }
 

@@ -70,6 +70,12 @@ public class OperationNameUtil {
     private String operationName(ContainerRequestContext requestContext, Class<?> clazz, Method method) {
         String operationNameProvider = this.operationNameProvider();
 
+        Traced tracedAnnotation = ExplicitTracingUtil.getAnnotation(clazz, method);
+
+        if (tracedAnnotation != null && !tracedAnnotation.operationName().equals("")) {
+            return tracedAnnotation.operationName();
+        }
+
         if (operationNameProvider != null && operationNameProvider.equals("http-path")) {
             return this.operationNameHttpPath(requestContext);
         }
