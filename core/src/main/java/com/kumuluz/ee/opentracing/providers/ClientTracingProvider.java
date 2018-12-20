@@ -1,13 +1,14 @@
 package com.kumuluz.ee.opentracing.providers;
 
+import com.kumuluz.ee.opentracing.filters.OpenTracingClientRequestFilter;
+import com.kumuluz.ee.opentracing.filters.OpenTracingClientResponseFilter;
 import io.opentracing.Tracer;
+import io.opentracing.contrib.concurrent.TracedExecutorService;
 import org.eclipse.microprofile.opentracing.ClientTracingRegistrarProvider;
 import org.glassfish.jersey.client.JerseyClientBuilder;
 
 import javax.enterprise.inject.spi.CDI;
 import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.ClientRequestFilter;
-import javax.ws.rs.client.ClientResponseFilter;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -22,7 +23,8 @@ public class ClientTracingProvider implements ClientTracingRegistrarProvider {
         Tracer tracer = CDI.current().select(Tracer.class).get();
         JerseyClientBuilder jerseyClientBuilder = (JerseyClientBuilder) clientBuilder;
         return jerseyClientBuilder
-                .register(ClientRequestFilter.class)
-                .register(ClientResponseFilter.class);
+                .register(new OpenTracingClientRequestFilter(tracer))
+                .register(new OpenTracingClientResponseFilter())
+                .executorService(new TracedExecutorService(executorService, tracer));
     }
 }

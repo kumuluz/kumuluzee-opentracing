@@ -37,6 +37,7 @@
         <microprofile-opentracing.version>1.2.1</microprofile-opentracing.version>
         <zipkin-sender-urlconnection.version>2.7.10</zipkin-sender-urlconnection.version>
         <opentracing.version>0.31.0</opentracing.version>
+        <opentracing-concurrent.version>0.2.0</opentracing-concurrent.version>
         <jaeger.version>0.32.0</jaeger.version>
         <jersey.version>2.27</jersey.version>
 
