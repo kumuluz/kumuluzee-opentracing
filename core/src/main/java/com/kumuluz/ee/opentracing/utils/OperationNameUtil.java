@@ -33,7 +33,9 @@ import javax.interceptor.InvocationContext;
 import javax.ws.rs.Path;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ResourceInfo;
+import javax.ws.rs.core.MultivaluedMap;
 import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * Server Span name util
@@ -90,9 +92,20 @@ public class OperationNameUtil {
         return requestContext.getMethod() + ":" + clazz.getName() + "." + method.getName();
     }
 
-
     private String operationNameHttpPath(ContainerRequestContext requestContext) {
-        return requestContext.getMethod() + ":/" + requestContext.getUriInfo().getPath();
+        MultivaluedMap<String, String> pathParams = requestContext.getUriInfo().getPathParameters();
+        String path = requestContext.getUriInfo().getPath();
+
+        for (String param : pathParams.keySet()) {
+            List<String> values = pathParams.get(param);
+            String wildCardParam = String.format("/{%s}", param);
+
+            for (String value : values) {
+                path = path.replace("/" + value, wildCardParam);
+            }
+        }
+
+        return requestContext.getMethod() + ":/" + path;
     }
 
 }
