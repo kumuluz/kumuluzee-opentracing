@@ -124,7 +124,6 @@
             <groupId>com.kumuluz.ee.config</groupId>
             <artifactId>kumuluzee-config-mp</artifactId>
             <version>${kumuluzee-config.version}</version>
-            <scope>test</scope>
         </dependency>
 
         <dependency>

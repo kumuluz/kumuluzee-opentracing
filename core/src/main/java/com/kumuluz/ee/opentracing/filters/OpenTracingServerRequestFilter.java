@@ -89,7 +89,7 @@ public class OpenTracingServerRequestFilter implements ContainerRequestFilter {
 
             SpanContext parentSpan = tracer.extract(Format.Builtin.HTTP_HEADERS,
                     new ServerHeaderExtractAdapter(requestContext.getHeaders()));
-            spanBuilder = tracer.buildSpan(operationName);
+            spanBuilder = tracer.buildSpan(operationName).ignoreActiveSpan();
 
             if (parentSpan != null) {
                 spanBuilder = spanBuilder.asChildOf(parentSpan);
@@ -103,7 +103,7 @@ public class OpenTracingServerRequestFilter implements ContainerRequestFilter {
                     .withTag(Tags.COMPONENT.getKey(), "jaxrs");
 
             requestContext.setProperty(OpenTracingUtil.OPENTRACING_SPAN_TITLE,
-                    spanBuilder.startActive(true).span());
+                    spanBuilder.startActive(false).span());
 
         } catch(Exception exception) {
             LOG.log(Level.SEVERE,"Exception occured when trying to start server span.", exception);

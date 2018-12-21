@@ -64,6 +64,7 @@ public class OpenTracingClientRequestFilter implements ClientRequestFilter {
             URI uri = requestContext.getUri();
 
             Tracer.SpanBuilder spanBuilder = tracer.buildSpan(requestContext.getMethod())
+                    .ignoreActiveSpan()
                     .asChildOf(tracer.activeSpan())
                     .withTag(Tags.SPAN_KIND.getKey(), Tags.SPAN_KIND_CLIENT)
                     .withTag(Tags.HTTP_METHOD.getKey(), requestContext.getMethod())
