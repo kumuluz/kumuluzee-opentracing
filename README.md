@@ -43,7 +43,7 @@ kumuluzee:
   opentracing:
     jaeger:
       service-name: KumuluzEE project # if not set kumuluzee.name value is used
-      agent-host: http://localhost # default agent host
+      agent-host: localhost # default agent host
       agent-port: 5775 # default agent port
       endpoint: /api/traces
       auth-token: authToken

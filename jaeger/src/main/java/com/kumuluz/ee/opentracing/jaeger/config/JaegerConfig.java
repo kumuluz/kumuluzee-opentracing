@@ -113,7 +113,7 @@ public class JaegerConfig {
     }
 
     public String getAgentHost() {
-        return agentHost.orElse("http://localhost");
+        return agentHost.orElse("localhost");
     }
 
     public Integer getAgentPort() {
