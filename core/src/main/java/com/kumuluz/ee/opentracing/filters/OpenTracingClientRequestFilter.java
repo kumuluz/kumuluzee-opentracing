@@ -25,14 +25,14 @@
 package com.kumuluz.ee.opentracing.filters;
 
 import com.kumuluz.ee.opentracing.adapters.ClientHeaderInjectAdapter;
-import com.kumuluz.ee.opentracing.utils.OpenTracingUtil;
+import com.kumuluz.ee.opentracing.utils.CommonUtil;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
 import io.opentracing.propagation.Format;
 import io.opentracing.tag.Tags;
-import io.opentracing.util.GlobalTracer;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.ext.Provider;
@@ -51,15 +51,23 @@ public class OpenTracingClientRequestFilter implements ClientRequestFilter {
 
     private static final Logger LOG = Logger.getLogger(OpenTracingClientRequestFilter.class.getName());
 
+    @Inject
+    private Tracer tracer;
+
+    public OpenTracingClientRequestFilter() {
+    }
+
+    public OpenTracingClientRequestFilter(Tracer tracer) {
+        this.tracer = tracer;
+    }
+
     @Override
     public void filter(ClientRequestContext requestContext) {
-
-        Tracer tracer = GlobalTracer.get();
-
         try {
             URI uri = requestContext.getUri();
 
             Tracer.SpanBuilder spanBuilder = tracer.buildSpan(requestContext.getMethod())
+                    .ignoreActiveSpan()
                     .asChildOf(tracer.activeSpan())
                     .withTag(Tags.SPAN_KIND.getKey(), Tags.SPAN_KIND_CLIENT)
                     .withTag(Tags.HTTP_METHOD.getKey(), requestContext.getMethod())
@@ -72,7 +80,7 @@ public class OpenTracingClientRequestFilter implements ClientRequestFilter {
 
             tracer.inject(span.context(), Format.Builtin.HTTP_HEADERS, new ClientHeaderInjectAdapter(requestContext.getHeaders()));
 
-            requestContext.setProperty(OpenTracingUtil.OPENTRACING_SPAN_TITLE, span);
+            requestContext.setProperty(CommonUtil.OPENTRACING_SPAN_TITLE, span);
 
         } catch(Exception exception) {
             LOG.log(Level.SEVERE,"Exception occured when trying to start client span.", exception);

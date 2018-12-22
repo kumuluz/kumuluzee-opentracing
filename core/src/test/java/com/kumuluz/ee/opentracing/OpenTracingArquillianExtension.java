@@ -21,28 +21,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 package com.kumuluz.ee.opentracing;
 
-import com.kumuluz.ee.opentracing.utils.JaegerTracingUtil;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.Initialized;
-import javax.enterprise.event.Observes;
-import javax.inject.Inject;
+import org.jboss.arquillian.container.test.spi.client.deployment.ApplicationArchiveProcessor;
+import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiveAppender;
+import org.jboss.arquillian.core.spi.LoadableExtension;
 
 /**
- * OpenTracing initiator
+ * Registers {@link OpenTracingLibraryAppender} with the Arquillian.
+ *
+ * @author Urban Malc
  * @author Domen Jeric
  * @since 1.0.0
  */
-@ApplicationScoped
-public class JaegerTracingInitiator {
+public class OpenTracingArquillianExtension implements LoadableExtension {
 
-    @Inject
-    private JaegerTracingUtil jaegerTracer;
-
-    private void initialize(@Observes @Initialized(ApplicationScoped.class) Object init) {
-        jaegerTracer.init();
+    @Override
+    public void register(ExtensionBuilder extensionBuilder) {
+        extensionBuilder
+                .service(AuxiliaryArchiveAppender.class, OpenTracingLibraryAppender.class)
+                .service(ApplicationArchiveProcessor.class, WebInfProcessor.class);
     }
 }

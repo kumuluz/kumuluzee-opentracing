@@ -22,14 +22,34 @@
  * SOFTWARE.
  */
 
-package com.kumuluz.ee.opentracing.config;
+package com.kumuluz.ee.opentracing;
+
+import io.opentracing.Tracer;
+import io.opentracing.mock.MockTracer;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.Initialized;
+import javax.enterprise.event.Observes;
+import javax.inject.Inject;
+import javax.servlet.ServletContext;
+import java.util.logging.Logger;
 
 /**
- * OpenTracing config interface
+ * Initializes  OpenTracing tracer
  * @author Domen Jeric
  * @since 1.0.0
  */
-public interface OpenTracingConfigInterface {
-    String getReporterHost();
-    int getReporterPort();
+@ApplicationScoped
+public class MockTracerInitializer {
+    private static final Logger LOG = Logger.getLogger(MockTracerInitializer.class.getName());
+
+    public void init(@Observes @Initialized(ApplicationScoped.class) Object init) {
+        if (init instanceof ServletContext) {
+            ServletContext servletContext = (ServletContext) init;
+            Tracer tracer = new MockTracer();
+            servletContext.setAttribute("tracer", tracer);
+        } else {
+            LOG.warning("Unable to initialize MockTracer for MicroProfile tests.");
+        }
+    }
 }

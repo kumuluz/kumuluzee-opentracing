@@ -27,15 +27,11 @@ package com.kumuluz.ee.opentracing.filters;
 
 import com.kumuluz.ee.opentracing.adapters.ServerHeaderExtractAdapter;
 import com.kumuluz.ee.opentracing.config.OpenTracingConfig;
-import com.kumuluz.ee.opentracing.utils.ExplicitTracingUtil;
-import com.kumuluz.ee.opentracing.utils.OpenTracingUtil;
-import com.kumuluz.ee.opentracing.utils.OperationNameUtil;
-import com.kumuluz.ee.opentracing.utils.RequestContextHolder;
+import com.kumuluz.ee.opentracing.utils.*;
 import io.opentracing.SpanContext;
 import io.opentracing.Tracer;
 import io.opentracing.propagation.Format;
 import io.opentracing.tag.Tags;
-import io.opentracing.util.GlobalTracer;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -66,6 +62,9 @@ public class OpenTracingServerRequestFilter implements ContainerRequestFilter {
     @Inject
     OpenTracingConfig tracerConfig;
 
+    @Inject
+    Tracer tracer;
+
     private static final Logger LOG = Logger.getLogger(OpenTracingServerRequestFilter.class.getName());
 
     public void filter(ContainerRequestContext requestContext) {
@@ -81,14 +80,13 @@ public class OpenTracingServerRequestFilter implements ContainerRequestFilter {
 
         String operationName = operationNameUtil.operationName(requestContext, resourceInfo);
 
-        Tracer tracer = GlobalTracer.get();
         Tracer.SpanBuilder spanBuilder;
 
         try {
 
             SpanContext parentSpan = tracer.extract(Format.Builtin.HTTP_HEADERS,
                     new ServerHeaderExtractAdapter(requestContext.getHeaders()));
-            spanBuilder = tracer.buildSpan(operationName);
+            spanBuilder = tracer.buildSpan(operationName).ignoreActiveSpan();
 
             if (parentSpan != null) {
                 spanBuilder = spanBuilder.asChildOf(parentSpan);
@@ -98,10 +96,10 @@ public class OpenTracingServerRequestFilter implements ContainerRequestFilter {
                     .withTag(Tags.SPAN_KIND.getKey(), Tags.SPAN_KIND_SERVER)
                     .withTag(Tags.HTTP_METHOD.getKey(), requestContext.getMethod())
                     .withTag(Tags.HTTP_URL.getKey(),
-                            requestContext.getUriInfo().getBaseUri().toString() + requestContext.getUriInfo().getPath())
+                            requestContext.getUriInfo().getRequestUri().toString())
                     .withTag(Tags.COMPONENT.getKey(), "jaxrs");
 
-            requestContext.setProperty(OpenTracingUtil.OPENTRACING_SPAN_TITLE,
+            requestContext.setProperty(CommonUtil.OPENTRACING_SPAN_TITLE,
                     spanBuilder.startActive(true).span());
 
         } catch(Exception exception) {

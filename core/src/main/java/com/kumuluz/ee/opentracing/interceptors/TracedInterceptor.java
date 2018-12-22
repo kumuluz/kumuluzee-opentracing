@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.kumuluz.ee.opentracing.annotations;
+package com.kumuluz.ee.opentracing.interceptors;
 
 import com.kumuluz.ee.opentracing.config.OpenTracingConfig;
 import com.kumuluz.ee.opentracing.utils.ExplicitTracingUtil;
@@ -32,7 +32,6 @@ import com.kumuluz.ee.opentracing.utils.SpanErrorLogger;
 import io.opentracing.Scope;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
-import io.opentracing.util.GlobalTracer;
 import org.eclipse.microprofile.opentracing.Traced;
 
 import javax.annotation.Priority;
@@ -41,6 +40,7 @@ import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
 import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.core.Response;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -61,6 +61,9 @@ public class TracedInterceptor {
     @Inject
     OperationNameUtil operationNameUtil;
 
+    @Inject
+    Tracer tracer;
+
     private static final Logger LOG = Logger.getLogger(TracedInterceptor.class.getName());
 
     @AroundInvoke
@@ -69,14 +72,13 @@ public class TracedInterceptor {
         ContainerRequestContext requestContext = RequestContextHolder.getRequestContext();
 
         if (ExplicitTracingUtil.tracingDisabled(context) ||
-                requestContext != null && ExplicitTracingUtil.pathMatchesSkipPattern(requestContext.getUriInfo(), skipPattern)) {
+            requestContext != null && ExplicitTracingUtil.pathMatchesSkipPattern(requestContext.getUriInfo(), skipPattern) ||
+            ExplicitTracingUtil.isJaxRsResourceMethod(context.getMethod())) {
             return context.proceed();
         }
 
-        Tracer tracer = GlobalTracer.get();
         Span parentSpan = tracer.activeSpan();
         String operationName = operationNameUtil.operationNameExplicitTracing(requestContext, context);
-
 
         try (Scope scope = tracer.buildSpan(operationName).asChildOf(parentSpan).startActive(true)){
 

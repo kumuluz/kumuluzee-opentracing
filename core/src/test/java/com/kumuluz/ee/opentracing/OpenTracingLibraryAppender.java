@@ -21,18 +21,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+package com.kumuluz.ee.opentracing;
 
-package com.kumuluz.ee.opentracing.utils;
+import com.kumuluz.ee.opentracing.providers.ClientTracingProvider;
+import org.jboss.arquillian.container.test.spi.client.deployment.CachedAuxilliaryArchiveAppender;
+import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
 
 /**
- * OpenTracing util interface
+ * Packages KumuluzEE OpenTracing library as a ShrinkWrap archive and adds it to deployments.
+ *
+ * @author Urban Malc
  * @author Domen Jeric
  * @since 1.0.0
  */
-public interface OpenTracingUtil {
+public class OpenTracingLibraryAppender extends CachedAuxilliaryArchiveAppender {
 
-    String OPENTRACING_SPAN_TITLE = "opentracing-span";
+    @Override
+    protected Archive<?> buildArchive() {
 
-    void init();
-
+        return ShrinkWrap.create(JavaArchive.class, "kumuluzee-opentracing.jar")
+                .addPackages(true, OpenTracingExtension.class.getPackage())
+                .addClass(MockTracerInitializer.class)
+                .addAsServiceProvider(com.kumuluz.ee.common.Extension.class, OpenTracingExtension.class)
+                .addAsServiceProvider(org.eclipse.microprofile.opentracing.ClientTracingRegistrarProvider.class, ClientTracingProvider.class)
+                .addAsResource("META-INF/beans.xml");
+    }
 }

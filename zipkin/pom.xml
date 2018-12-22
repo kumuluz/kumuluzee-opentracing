@@ -33,5 +33,20 @@
             <groupId>com.kumuluz.ee.opentracing</groupId>
             <artifactId>kumuluzee-opentracing-core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.jaegertracing</groupId>
+            <artifactId>jaeger-client</artifactId>
+            <version>${jaeger.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.jaegertracing</groupId>
+            <artifactId>jaeger-zipkin</artifactId>
+            <version>${jaeger.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.zipkin.reporter2</groupId>
+            <artifactId>zipkin-sender-urlconnection</artifactId>
+            <version>${zipkin-sender-urlconnection.version}</version>
+        </dependency>
     </dependencies>
 </project>

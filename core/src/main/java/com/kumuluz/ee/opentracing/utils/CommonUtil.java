@@ -22,29 +22,35 @@
  * SOFTWARE.
  */
 
-package com.kumuluz.ee.opentracing;
+package com.kumuluz.ee.opentracing.utils;
 
-
-import io.opentracing.Tracer;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Produces;
-import javax.inject.Inject;
-import javax.servlet.ServletContext;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Logger;
 
 /**
- * OpenTracing Tracer producer
- * @author Domen Jeric
+ * Common utils
  * @author Domen Kajdic
  * @since 1.0.0
  */
-@ApplicationScoped
-public class TracerProducer {
-    @Inject
-    private ServletContext servletContext;
+public class CommonUtil {
+    private static final Logger LOG = Logger.getLogger(CommonUtil.class.getName());
 
-    @Produces
-    public Tracer produceTracer() {
-        return (Tracer) servletContext.getAttribute("tracer");
+    public static final String OPENTRACING_SPAN_TITLE = "opentracing-span";
+
+    public static Map<String, String> getTagsFromTagString(String tagString) {
+        Map<String, String> tags = new HashMap<>();
+        if(tagString != null && !tagString.isEmpty()) {
+            try {
+                String[] arrayOfTags = tagString.split(",");
+                for(String tag: arrayOfTags) {
+                    String[] split = tag.split("=");
+                    tags.put(split[0], split[1]);
+                }
+            } catch (Exception e) {
+                LOG.warning("Invalid tag format provided. Format of tags should be like tag1=value1,tag2=value2.");
+            }
+        }
+        return tags;
     }
 }

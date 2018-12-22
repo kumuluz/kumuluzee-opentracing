@@ -25,26 +25,21 @@
 package com.kumuluz.ee.opentracing;
 
 
-import io.opentracing.Tracer;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Produces;
-import javax.inject.Inject;
-import javax.servlet.ServletContext;
+import org.jboss.arquillian.container.test.spi.client.deployment.ApplicationArchiveProcessor;
+import org.jboss.arquillian.test.spi.TestClass;
+import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 
 /**
- * OpenTracing Tracer producer
+ * WEB-INF processor
  * @author Domen Jeric
- * @author Domen Kajdic
  * @since 1.0.0
  */
-@ApplicationScoped
-public class TracerProducer {
-    @Inject
-    private ServletContext servletContext;
+public class WebInfProcessor implements ApplicationArchiveProcessor {
 
-    @Produces
-    public Tracer produceTracer() {
-        return (Tracer) servletContext.getAttribute("tracer");
+    @Override
+    public void process(Archive<?> archive, TestClass testClass) {
+        WebArchive war = archive.as(WebArchive.class);
+        war.addAsWebInfResource("WEB-INF/web.xml");
     }
 }

@@ -24,39 +24,48 @@
 
 package com.kumuluz.ee.opentracing.config;
 
+import com.kumuluz.ee.common.runtime.EeRuntime;
 import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
+import com.kumuluz.ee.opentracing.utils.CommonUtil;
+import org.eclipse.microprofile.config.ConfigProvider;
 
 import javax.enterprise.context.ApplicationScoped;
+import java.util.Optional;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 /**
  * OpenTracing config
  * @author Domen Jeric
+ * @author Domen Kajdic
  * @since 1.0.0
  */
 @ApplicationScoped
 public class OpenTracingConfig {
 
-    private static final String DEFAULT_SERVICE_NAME = "KumuluzEE Project";
+    private static final Logger LOG = Logger.getLogger(OpenTracingConfig.class.getName());
     private static final String MP_CONFIG_PREFIX = "mp.opentracing.";
 
-    public String getServiceName() {
-        return ConfigurationUtil.getInstance()
-                .get("kumuluzee.name")
-                .orElse(DEFAULT_SERVICE_NAME);
+    public String getServiceName(String serviceName) {
+        if(serviceName == null || serviceName.isEmpty()) {
+            serviceName = ConfigurationUtil.getInstance().get("kumuluzee.name").orElse(null);
+        }
+        if(serviceName == null) {
+            LOG.severe("No service name provided. Using instance id.");
+            serviceName = EeRuntime.getInstance().getInstanceId();
+        }
+        return serviceName;
     }
 
     public String getSelectedOperationNameProvider() {
-        return ConfigurationUtil.getInstance()
-                .get(MP_CONFIG_PREFIX + "server.operation-name-provider")
-                .orElse("class-method");
+        return ConfigProvider.getConfig()
+            .getOptionalValue(MP_CONFIG_PREFIX + "server.operation-name-provider", String.class)
+            .orElse("class-method");
     }
 
     public Pattern getSkipPattern() {
-        String skipPattern = ConfigurationUtil.getInstance()
-                .get(MP_CONFIG_PREFIX + "server.skip-pattern")
-                .orElse(null);
-
-        return skipPattern != null ? Pattern.compile(skipPattern) : null;
+        Optional<String> skipPattern = ConfigProvider.getConfig()
+                .getOptionalValue(MP_CONFIG_PREFIX + "server.skip-pattern", String.class);
+        return Pattern.compile(skipPattern.orElse("/health|/metrics.*|/openapi"));
     }
 }
