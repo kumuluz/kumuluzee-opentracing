@@ -68,10 +68,7 @@ public class ZipkinTracerInitializer {
             String serviceName = openTracingConfig.getServiceName(zipkinConfig.getServiceName());
             Map<String, String> tags = CommonUtil.getTagsFromTagString(zipkinConfig.getTags());
 
-            String zipkinHost = zipkinConfig.getZipkinHost();
-            if(zipkinHost == null || zipkinHost.isEmpty()) {
-                zipkinHost = "http://localhost:9411";
-            }
+            String zipkinHost = zipkinConfig.getZipkinHost() + ":" + zipkinConfig.getSamplerHostPort();
 
             Reporter reporter = new ZipkinV2Reporter(AsyncReporter.create(URLConnectionSender.create(zipkinHost + "/api/v2/spans")));
 

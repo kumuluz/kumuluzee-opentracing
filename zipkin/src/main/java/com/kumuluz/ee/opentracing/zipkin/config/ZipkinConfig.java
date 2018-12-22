@@ -24,75 +24,78 @@
 
 package com.kumuluz.ee.opentracing.zipkin.config;
 
-import com.kumuluz.ee.configuration.cdi.ConfigBundle;
-import com.kumuluz.ee.configuration.cdi.ConfigValue;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import java.util.Optional;
 
 /**
  * Zipkin config class
  *
  * @author Domen Kajdic
+ * @author Domen Jeric
  * @since 1.0.0
  */
 @ApplicationScoped
-@ConfigBundle("kumuluzee.opentracing.jaeger")
 public class ZipkinConfig {
-    @ConfigValue("service-name")
-    private String serviceName;
 
-    @ConfigValue("zipkin-host")
-    private String zipkinHost;
+    private static final String ZIPKIN_CONFIG = "kumuluzee.opentracing.zipkin.";
 
-    @ConfigValue("tags")
-    private String tags;
+    @Inject
+    @ConfigProperty(name = ZIPKIN_CONFIG + "service-name")
+    private Optional<String> serviceName;
 
-    @ConfigValue("sampler.type")
-    private String samplerType;
+    @Inject
+    @ConfigProperty(name = ZIPKIN_CONFIG + "agent-host")
+    private Optional<String> zipkinHost;
 
-    @ConfigValue("sampler.param")
-    private Integer sampleParam;
+    @Inject
+    @ConfigProperty(name = ZIPKIN_CONFIG + "tags")
+    private Optional<String> tags;
 
-    @ConfigValue("sampler.manager-host-port")
-    private String samplerHostPort;
+    @Inject
+    @ConfigProperty(name = ZIPKIN_CONFIG + "sampler.type")
+    private Optional<String> samplerType;
 
-    @ConfigValue("traceid-128bit")
-    private Boolean useTraceId128Bit;
+    @Inject
+    @ConfigProperty(name = ZIPKIN_CONFIG + "sampler.param")
+    private Optional<Integer> sampleParam;
+
+    @Inject
+    @ConfigProperty(name = ZIPKIN_CONFIG + "agent-port")
+    private Optional<String> samplerHostPort;
+
+    @Inject
+    @ConfigProperty(name = ZIPKIN_CONFIG + "traceid-128bit")
+    private Optional<Boolean> useTraceId128Bit;
 
 
     public String getServiceName() {
-        return serviceName;
+        return serviceName.orElse(null);
     }
 
     public String getZipkinHost() {
-        return zipkinHost;
+        return zipkinHost.orElse("http://localhost");
     }
 
     public String getTags() {
-        return tags;
+        return tags.orElse(null);
     }
 
     public String getSamplerType() {
-        if(samplerType == null || samplerType.isEmpty()) {
-            return "const";
-        } else {
-            return samplerType;
-        }
+        return samplerType.orElse("const");
     }
 
     public Integer getSampleParam() {
-        if(samplerType == null || samplerType.isEmpty()) {
-            return 1;
-        } else {
-            return sampleParam;
-        }
+        return sampleParam.orElse(1);
     }
 
     public String getSamplerHostPort() {
-        return samplerHostPort;
+        return samplerHostPort.orElse("9411");
     }
 
     public Boolean getUseTraceId128Bit() {
-        return useTraceId128Bit;
+        return useTraceId128Bit.orElse(null);
     }
 }
