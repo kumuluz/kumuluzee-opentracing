@@ -24,7 +24,8 @@
 
 package com.kumuluz.ee.opentracing.zipkin;
 
-import com.kumuluz.ee.opentracing.utils.CommonUtils;
+import com.kumuluz.ee.opentracing.config.OpenTracingConfig;
+import com.kumuluz.ee.opentracing.utils.CommonUtil;
 import com.kumuluz.ee.opentracing.zipkin.config.ZipkinConfig;
 import io.jaegertracing.Configuration;
 import io.jaegertracing.spi.Reporter;
@@ -52,17 +53,20 @@ public class ZipkinTracerInitializer {
     private static final Logger LOG = Logger.getLogger(ZipkinTracerInitializer.class.getName());
 
     @Inject
-    private ZipkinConfig config;
+    private ZipkinConfig zipkinConfig;
+
+    @Inject
+    private OpenTracingConfig openTracingConfig;
 
     private void initialise(@Observes @Initialized(ApplicationScoped.class) Object init) {
-        LOG.info("Initializing OpenTracing extension with Zipkin tracking.");
+        LOG.info("Initializing OpenTracing extension with Zipkin tracing.");
         if (init instanceof ServletContext) {
             ServletContext servletContext = (ServletContext) init;
 
-            String serviceName = CommonUtils.getServiceName(config.getServiceName());
-            Map<String, String> tags = CommonUtils.getTagsFromTagString(config.getTags());
+            String serviceName = openTracingConfig.getServiceName(zipkinConfig.getServiceName());
+            Map<String, String> tags = CommonUtil.getTagsFromTagString(zipkinConfig.getTags());
 
-            String zipkinHost = config.getZipkinHost();
+            String zipkinHost = zipkinConfig.getZipkinHost();
             if(zipkinHost == null || zipkinHost.isEmpty()) {
                 zipkinHost = "http://localhost:9411";
             }
@@ -70,9 +74,9 @@ public class ZipkinTracerInitializer {
             Reporter reporter = new ZipkinV2Reporter(AsyncReporter.create(URLConnectionSender.create(zipkinHost + "/api/v2/spans")));
 
             Configuration.SamplerConfiguration samplerConfiguration = new Configuration.SamplerConfiguration()
-                    .withManagerHostPort(config.getSamplerHostPort())
-                    .withParam(config.getSampleParam())
-                    .withType(config.getSamplerType());
+                    .withManagerHostPort(zipkinConfig.getSamplerHostPort())
+                    .withParam(zipkinConfig.getSampleParam())
+                    .withType(zipkinConfig.getSamplerType());
 
             Configuration.CodecConfiguration codecConfiguration = new Configuration.CodecConfiguration();
             codecConfiguration.withPropagation(Configuration.Propagation.B3);
@@ -82,7 +86,8 @@ public class ZipkinTracerInitializer {
                     .withCodec(codecConfiguration)
                     .withTracerTags(tags);
 
-            Boolean useTraceId128Bit = config.getUseTraceId128Bit();
+            Boolean useTraceId128Bit = zipkinConfig.getUseTraceId128Bit();
+
             if(useTraceId128Bit != null) {
                 configuration.withTraceId128Bit(useTraceId128Bit);
             }
@@ -94,9 +99,9 @@ public class ZipkinTracerInitializer {
 
             servletContext.setAttribute("tracer", tracer);
 
-            LOG.info("OpenTracing extension sucesfully initialized.");
+            LOG.info("OpenTracing extension successfully initialized.");
         } else {
-            LOG.warning("Failed while initializing Zipkin tracing.");
+            LOG.warning("Failed initializing Zipkin tracing.");
         }
     }
 }

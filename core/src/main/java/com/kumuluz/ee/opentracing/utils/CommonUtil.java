@@ -24,15 +24,36 @@
 
 package com.kumuluz.ee.opentracing.utils;
 
+import com.kumuluz.ee.common.runtime.EeRuntime;
+import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Logger;
+
 /**
- * OpenTracing util interface
- * @author Domen Jeric
+ * Common utils
+ * @author Domen Kajdic
  * @since 1.0.0
  */
-public interface OpenTracingUtil {
+public class CommonUtil {
+    private static final Logger LOG = Logger.getLogger(CommonUtil.class.getName());
 
-    String OPENTRACING_SPAN_TITLE = "opentracing-span";
+    public static final String OPENTRACING_SPAN_TITLE = "opentracing-span";
 
-    void init();
-
+    public static Map<String, String> getTagsFromTagString(String tagString) {
+        Map<String, String> tags = new HashMap<>();
+        if(tagString != null && !tagString.isEmpty()) {
+            try {
+                String[] arrayOfTags = tagString.split(",");
+                for(String tag: arrayOfTags) {
+                    String[] split = tag.split("=");
+                    tags.put(split[0], split[1]);
+                }
+            } catch (Exception e) {
+                LOG.warning("Invalid tag format provided. Format of tags should be like tag1=value1,tag2=value2.");
+            }
+        }
+        return tags;
+    }
 }

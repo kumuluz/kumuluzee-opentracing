@@ -24,7 +24,7 @@
 
 package com.kumuluz.ee.opentracing.filters;
 
-import com.kumuluz.ee.opentracing.utils.OpenTracingUtil;
+import com.kumuluz.ee.opentracing.utils.CommonUtil;
 import com.kumuluz.ee.opentracing.utils.SpanErrorLogger;
 import io.opentracing.Span;
 import io.opentracing.tag.Tags;
@@ -52,7 +52,7 @@ public class OpenTracingServerResponseFilter implements ContainerResponseFilter 
     public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) {
 
         try{
-            Span span = (Span) requestContext.getProperty(OpenTracingUtil.OPENTRACING_SPAN_TITLE);
+            Span span = (Span) requestContext.getProperty(CommonUtil.OPENTRACING_SPAN_TITLE);
 
             if (span == null) {
                 return;

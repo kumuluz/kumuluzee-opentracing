@@ -27,10 +27,7 @@ package com.kumuluz.ee.opentracing.filters;
 
 import com.kumuluz.ee.opentracing.adapters.ServerHeaderExtractAdapter;
 import com.kumuluz.ee.opentracing.config.OpenTracingConfig;
-import com.kumuluz.ee.opentracing.utils.ExplicitTracingUtil;
-import com.kumuluz.ee.opentracing.utils.OpenTracingUtil;
-import com.kumuluz.ee.opentracing.utils.OperationNameUtil;
-import com.kumuluz.ee.opentracing.utils.RequestContextHolder;
+import com.kumuluz.ee.opentracing.utils.*;
 import io.opentracing.SpanContext;
 import io.opentracing.Tracer;
 import io.opentracing.propagation.Format;
@@ -102,7 +99,7 @@ public class OpenTracingServerRequestFilter implements ContainerRequestFilter {
                             requestContext.getUriInfo().getRequestUri().toString())
                     .withTag(Tags.COMPONENT.getKey(), "jaxrs");
 
-            requestContext.setProperty(OpenTracingUtil.OPENTRACING_SPAN_TITLE,
+            requestContext.setProperty(CommonUtil.OPENTRACING_SPAN_TITLE,
                     spanBuilder.startActive(false).span());
 
         } catch(Exception exception) {

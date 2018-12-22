@@ -24,10 +24,14 @@
 
 package com.kumuluz.ee.opentracing.config;
 
+import com.kumuluz.ee.common.runtime.EeRuntime;
+import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
+import com.kumuluz.ee.opentracing.utils.CommonUtil;
 import org.eclipse.microprofile.config.ConfigProvider;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.Optional;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 /**
@@ -38,7 +42,20 @@ import java.util.regex.Pattern;
  */
 @ApplicationScoped
 public class OpenTracingConfig {
+
+    private static final Logger LOG = Logger.getLogger(OpenTracingConfig.class.getName());
     private static final String MP_CONFIG_PREFIX = "mp.opentracing.";
+
+    public String getServiceName(String serviceName) {
+        if(serviceName == null || serviceName.isEmpty()) {
+            serviceName = ConfigurationUtil.getInstance().get("kumuluzee.name").orElse(null);
+        }
+        if(serviceName == null) {
+            LOG.severe("No service name provided. Using instance id.");
+            serviceName = EeRuntime.getInstance().getInstanceId();
+        }
+        return serviceName;
+    }
 
     public String getSelectedOperationNameProvider() {
         Optional<String> nameProvider = ConfigProvider.getConfig()

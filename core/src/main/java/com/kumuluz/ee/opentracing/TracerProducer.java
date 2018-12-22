@@ -45,6 +45,6 @@ public class TracerProducer {
 
     @Produces
     public Tracer produceTracer() {
-        return (Tracer)servletContext.getAttribute("tracer");
+        return (Tracer) servletContext.getAttribute("tracer");
     }
 }

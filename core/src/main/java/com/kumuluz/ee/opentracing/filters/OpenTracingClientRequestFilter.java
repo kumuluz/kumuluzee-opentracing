@@ -25,7 +25,7 @@
 package com.kumuluz.ee.opentracing.filters;
 
 import com.kumuluz.ee.opentracing.adapters.ClientHeaderInjectAdapter;
-import com.kumuluz.ee.opentracing.utils.OpenTracingUtil;
+import com.kumuluz.ee.opentracing.utils.CommonUtil;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
 import io.opentracing.propagation.Format;
@@ -77,7 +77,7 @@ public class OpenTracingClientRequestFilter implements ClientRequestFilter {
 
             tracer.inject(span.context(), Format.Builtin.HTTP_HEADERS, new ClientHeaderInjectAdapter(requestContext.getHeaders()));
 
-            requestContext.setProperty(OpenTracingUtil.OPENTRACING_SPAN_TITLE, span);
+            requestContext.setProperty(CommonUtil.OPENTRACING_SPAN_TITLE, span);
 
         } catch(Exception exception) {
             LOG.log(Level.SEVERE,"Exception occured when trying to start client span.", exception);

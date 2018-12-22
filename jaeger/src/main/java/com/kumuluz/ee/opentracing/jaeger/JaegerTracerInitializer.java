@@ -24,8 +24,9 @@
 
 package com.kumuluz.ee.opentracing.jaeger;
 
+import com.kumuluz.ee.opentracing.config.OpenTracingConfig;
 import com.kumuluz.ee.opentracing.jaeger.config.JaegerConfig;
-import com.kumuluz.ee.opentracing.utils.CommonUtils;
+import com.kumuluz.ee.opentracing.utils.CommonUtil;
 import io.jaegertracing.Configuration;
 import io.opentracing.Tracer;
 
@@ -38,7 +39,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 /**
- * Jaeger tracer inicializer class
+ * Jaeger tracer initializer class
  *
  * @author Domen Kajdic
  * @since 1.0.0
@@ -48,37 +49,42 @@ public class JaegerTracerInitializer {
     private static final Logger LOG = Logger.getLogger(JaegerTracerInitializer.class.getName());
 
     @Inject
-    private JaegerConfig config;
+    private JaegerConfig jaegerConfig;
+
+    @Inject
+    private OpenTracingConfig openTracingConfig;
 
     private void initialise(@Observes @Initialized(ApplicationScoped.class) Object init) {
-        LOG.info("Initializing OpenTracing extension with Jaeger tracking.");
+        LOG.info("Initializing OpenTracing extension with Jaeger tracing.");
+
         if (init instanceof ServletContext) {
             ServletContext servletContext = (ServletContext) init;
 
-            String serviceName = CommonUtils.getServiceName(config.getServiceName());
-            Map<String, String> tags = CommonUtils.getTagsFromTagString(config.getTags());
+            String serviceName = openTracingConfig.getServiceName(jaegerConfig.getServiceName());
+            Map<String, String> tags = CommonUtil.getTagsFromTagString(jaegerConfig.getTags());
 
             Configuration.SenderConfiguration senderConfiguration = new Configuration.SenderConfiguration()
-                    .withAgentHost(config.getAgentHost())
-                    .withAgentPort(config.getAgentPort())
-                    .withEndpoint(config.getEndpoint())
-                    .withAuthToken(config.getAuthToken())
-                    .withAuthUsername(config.getUsername())
-                    .withAuthPassword(config.getPassword());
+                    .withAgentHost(jaegerConfig.getAgentHost())
+                    .withAgentPort(jaegerConfig.getAgentPort())
+                    .withEndpoint(jaegerConfig.getEndpoint())
+                    .withAuthToken(jaegerConfig.getAuthToken())
+                    .withAuthUsername(jaegerConfig.getUsername())
+                    .withAuthPassword(jaegerConfig.getPassword());
 
             Configuration.ReporterConfiguration reporterConfiguration = new Configuration.ReporterConfiguration()
                     .withSender(senderConfiguration)
-                    .withLogSpans(config.getLogSpans())
-                    .withMaxQueueSize(config.getMaxQueueSize())
-                    .withFlushInterval(config.getFlushInterval());
+                    .withLogSpans(jaegerConfig.getLogSpans())
+                    .withMaxQueueSize(jaegerConfig.getMaxQueueSize())
+                    .withFlushInterval(jaegerConfig.getFlushInterval());
 
             Configuration.SamplerConfiguration samplerConfiguration = new Configuration.SamplerConfiguration()
-                    .withManagerHostPort(config.getSamplerHostPort())
-                    .withParam(config.getSampleParam())
-                    .withType(config.getSamplerType());
+                    .withManagerHostPort(jaegerConfig.getSamplerHostPort())
+                    .withParam(jaegerConfig.getSampleParam())
+                    .withType(jaegerConfig.getSamplerType());
 
             Configuration.CodecConfiguration codecConfiguration = new Configuration.CodecConfiguration();
-            String propagation = config.getPropagation();
+            String propagation = jaegerConfig.getPropagation();
+
             if(propagation != null && !propagation.isEmpty()) {
                 codecConfiguration.withPropagation(Configuration.Propagation.valueOf(propagation));
             }
@@ -89,7 +95,8 @@ public class JaegerTracerInitializer {
                     .withCodec(codecConfiguration)
                     .withTracerTags(tags);
 
-            Boolean useTraceId128Bit = config.getUseTraceId128Bit();
+            Boolean useTraceId128Bit = jaegerConfig.getUseTraceId128Bit();
+
             if(useTraceId128Bit != null) {
                 configuration.withTraceId128Bit(useTraceId128Bit);
             }
@@ -97,9 +104,9 @@ public class JaegerTracerInitializer {
             Tracer tracer = configuration.getTracer();
             servletContext.setAttribute("tracer", tracer);
 
-            LOG.info("OpenTracing extension sucesfully initialized.");
+            LOG.info("OpenTracing extension successfully initialized.");
         } else {
-            LOG.warning("Failed while initializing Jaeger tracing.");
+            LOG.warning("Failed initializing Jaeger tracing.");
         }
     }
 }
