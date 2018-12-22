@@ -100,7 +100,7 @@ public class OpenTracingServerRequestFilter implements ContainerRequestFilter {
                     .withTag(Tags.COMPONENT.getKey(), "jaxrs");
 
             requestContext.setProperty(CommonUtil.OPENTRACING_SPAN_TITLE,
-                    spanBuilder.startActive(false).span());
+                    spanBuilder.startActive(true).span());
 
         } catch(Exception exception) {
             LOG.log(Level.SEVERE,"Exception occured when trying to start server span.", exception);

@@ -31,6 +31,7 @@ import io.jaegertracing.Configuration;
 import io.jaegertracing.spi.Reporter;
 import io.jaegertracing.zipkin.ZipkinV2Reporter;
 import io.opentracing.Tracer;
+import io.opentracing.util.GlobalTracer;
 import zipkin2.reporter.AsyncReporter;
 import zipkin2.reporter.urlconnection.URLConnectionSender;
 
@@ -60,6 +61,7 @@ public class ZipkinTracerInitializer {
 
     private void initialise(@Observes @Initialized(ApplicationScoped.class) Object init) {
         LOG.info("Initializing OpenTracing extension with Zipkin tracing.");
+
         if (init instanceof ServletContext) {
             ServletContext servletContext = (ServletContext) init;
 
@@ -98,6 +100,7 @@ public class ZipkinTracerInitializer {
                     .build();
 
             servletContext.setAttribute("tracer", tracer);
+            GlobalTracer.register(tracer);
 
             LOG.info("OpenTracing extension successfully initialized.");
         } else {

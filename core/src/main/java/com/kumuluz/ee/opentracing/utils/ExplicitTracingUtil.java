@@ -27,6 +27,7 @@ package com.kumuluz.ee.opentracing.utils;
 import org.eclipse.microprofile.opentracing.Traced;
 
 import javax.interceptor.InvocationContext;
+import javax.ws.rs.*;
 import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.UriInfo;
 import java.lang.reflect.Method;
@@ -69,4 +70,11 @@ public class ExplicitTracingUtil {
 
         return skipPattern.matcher(path).matches();
     }
+
+    public static boolean isJaxRsResourceMethod(Method method) {
+        return method.isAnnotationPresent(GET.class) || method.isAnnotationPresent(PUT.class)
+                || method.isAnnotationPresent(POST.class) || method.isAnnotationPresent(DELETE.class)
+                || method.isAnnotationPresent(HEAD.class);
+    }
+
 }

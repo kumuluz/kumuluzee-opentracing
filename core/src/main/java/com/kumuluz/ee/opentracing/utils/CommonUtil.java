@@ -24,9 +24,6 @@
 
 package com.kumuluz.ee.opentracing.utils;
 
-import com.kumuluz.ee.common.runtime.EeRuntime;
-import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;

@@ -58,9 +58,9 @@ public class OpenTracingConfig {
     }
 
     public String getSelectedOperationNameProvider() {
-        Optional<String> nameProvider = ConfigProvider.getConfig()
-                .getOptionalValue(MP_CONFIG_PREFIX + "server.operation-name-provider", String.class);
-        return nameProvider.orElse("class-method");
+        return ConfigProvider.getConfig()
+            .getOptionalValue(MP_CONFIG_PREFIX + "server.operation-name-provider", String.class)
+            .orElse("class-method");
     }
 
     public Pattern getSkipPattern() {

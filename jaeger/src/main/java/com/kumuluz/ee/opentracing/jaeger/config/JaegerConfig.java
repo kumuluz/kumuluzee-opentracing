@@ -24,138 +24,151 @@
 
 package com.kumuluz.ee.opentracing.jaeger.config;
 
-import com.kumuluz.ee.configuration.cdi.ConfigBundle;
-import com.kumuluz.ee.configuration.cdi.ConfigValue;
+
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import java.util.Optional;
 
 /**
  * Jaeger config class
  *
  * @author Domen Kajdic
+ * @author Domen Jeric
  * @since 1.0.0
  */
 @ApplicationScoped
-@ConfigBundle("kumuluzee.opentracing.jaeger")
 public class JaegerConfig {
-    @ConfigValue("service-name")
-    private String serviceName;
 
-    @ConfigValue("agent-host")
-    private String agentHost;
+    private static final String JAEGER_CONFIG = "kumuluzee.opentracing.jaeger.";
 
-    @ConfigValue("agent-port")
-    private Integer agentPort;
+    @Inject
+    @ConfigProperty(name = JAEGER_CONFIG + "service-name")
+    private Optional<String> serviceName;
 
-    @ConfigValue("endpoint")
-    private String endpoint;
+    @Inject
+    @ConfigProperty(name = JAEGER_CONFIG + "agent-host")
+    private Optional<String> agentHost;
 
-    @ConfigValue("auth-token")
-    private String authToken;
+    @Inject
+    @ConfigProperty(name = JAEGER_CONFIG + "agent-port")
+    private Optional<Integer> agentPort;
 
-    @ConfigValue("user")
-    private String username;
+    @Inject
+    @ConfigProperty(name = JAEGER_CONFIG + "endpoint")
+    private Optional<String> endpoint;
 
-    @ConfigValue("password")
-    private String password;
+    @Inject
+    @ConfigProperty(name = JAEGER_CONFIG + "auth-token")
+    private Optional<String> authToken;
 
-    @ConfigValue("reporter.log-spans")
-    private Boolean logSpans;
+    @Inject
+    @ConfigProperty(name = JAEGER_CONFIG + "username")
+    private Optional<String> username;
 
-    @ConfigValue("reporter.max-queue-size")
-    private Integer maxQueueSize;
+    @Inject
+    @ConfigProperty(name = JAEGER_CONFIG + "password")
+    private Optional<String> password;
 
-    @ConfigValue("reporter.flush-interval")
-    private Integer flushInterval;
+    @Inject
+    @ConfigProperty(name = JAEGER_CONFIG + "reporter.log-spans")
+    private Optional<Boolean> logSpans;
 
-    @ConfigValue("tags")
-    private String tags;
+    @Inject
+    @ConfigProperty(name = JAEGER_CONFIG + "reporter.max-queue-size")
+    private Optional<Integer> maxQueueSize;
 
-    @ConfigValue("sampler.type")
-    private String samplerType;
+    @Inject
+    @ConfigProperty(name = JAEGER_CONFIG + "reporter.flush-interval")
+    private Optional<Integer> flushInterval;
 
-    @ConfigValue("sampler.param")
-    private Integer sampleParam;
+    @Inject
+    @ConfigProperty(name = JAEGER_CONFIG + "tags")
+    private Optional<String> tags;
 
-    @ConfigValue("sampler.manager-host-port")
-    private String samplerHostPort;
+    @Inject
+    @ConfigProperty(name = JAEGER_CONFIG + "sampler.type")
+    private Optional<String> samplerType;
 
-    @ConfigValue("propagation")
-    private String propagation;
+    @Inject
+    @ConfigProperty(name = JAEGER_CONFIG + "sampler.param")
+    private Optional<Integer> sampleParam;
 
-    @ConfigValue("traceid-128bit")
-    private Boolean useTraceId128Bit;
+    @Inject
+    @ConfigProperty(name = JAEGER_CONFIG + "sampler.manager-host-port")
+    private Optional<String> samplerHostPort;
+
+    @Inject
+    @ConfigProperty(name = JAEGER_CONFIG + "propagation")
+    private Optional<String> propagation;
+
+    @Inject
+    @ConfigProperty(name = JAEGER_CONFIG + "traceid-128bit")
+    private Optional<Boolean> useTraceId128Bit;
 
 
     public String getServiceName() {
-        return serviceName;
+        return serviceName.orElse(null);
     }
 
     public String getAgentHost() {
-        return agentHost;
+        return agentHost.orElse(null);
     }
 
     public Integer getAgentPort() {
-        return agentPort;
+        return agentPort.orElse(null);
     }
 
     public String getEndpoint() {
-        return endpoint;
+        return endpoint.orElse(null);
     }
 
     public String getAuthToken() {
-        return authToken;
+        return authToken.orElse(null);
     }
 
     public String getUsername() {
-        return username;
+        return username.orElse(null);
     }
 
     public String getPassword() {
-        return password;
+        return password.orElse(null);
     }
 
     public Boolean getLogSpans() {
-        return logSpans;
+        return logSpans.orElse(null);
     }
 
     public Integer getMaxQueueSize() {
-        return maxQueueSize;
+        return maxQueueSize.orElse(null);
     }
 
     public Integer getFlushInterval() {
-        return flushInterval;
+        return flushInterval.orElse(null);
     }
 
     public String getTags() {
-        return tags;
+        return tags.orElse(null);
     }
 
     public String getSamplerType() {
-        if(samplerType == null || samplerType.isEmpty()) {
-            return "const";
-        } else {
-            return samplerType;
-        }
+        return samplerType.orElse("const");
     }
 
     public Integer getSampleParam() {
-        if(samplerType == null || samplerType.isEmpty()) {
-            return 1;
-        } else {
-            return sampleParam;
-        }
+        return sampleParam.orElse(1);
     }
 
     public String getSamplerHostPort() {
-        return samplerHostPort;
+        return samplerHostPort.orElse(null);
     }
 
     public String getPropagation() {
-        return propagation;
+        return propagation.orElse(null);
     }
 
     public Boolean getUseTraceId128Bit() {
-        return useTraceId128Bit;
+        return useTraceId128Bit.orElse(null);
     }
 }

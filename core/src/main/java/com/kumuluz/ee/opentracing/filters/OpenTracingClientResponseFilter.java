@@ -52,7 +52,7 @@ public class OpenTracingClientResponseFilter implements ClientResponseFilter {
     @Override
     public void filter(ClientRequestContext requestContext, ClientResponseContext responseContext) {
 
-        try{
+        try {
 
             Span span = (Span) requestContext.getProperty(CommonUtil.OPENTRACING_SPAN_TITLE);
             span.setTag(Tags.HTTP_STATUS.getKey(), responseContext.getStatus());

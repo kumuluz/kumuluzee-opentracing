@@ -73,7 +73,7 @@ public class TracedInterceptor {
 
         if (ExplicitTracingUtil.tracingDisabled(context) ||
             requestContext != null && ExplicitTracingUtil.pathMatchesSkipPattern(requestContext.getUriInfo(), skipPattern) ||
-            context.getMethod().getReturnType().equals(Response.class)) {
+            ExplicitTracingUtil.isJaxRsResourceMethod(context.getMethod())) {
             return context.proceed();
         }
 

@@ -29,6 +29,7 @@ import com.kumuluz.ee.opentracing.jaeger.config.JaegerConfig;
 import com.kumuluz.ee.opentracing.utils.CommonUtil;
 import io.jaegertracing.Configuration;
 import io.opentracing.Tracer;
+import io.opentracing.util.GlobalTracer;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Initialized;
@@ -103,6 +104,7 @@ public class JaegerTracerInitializer {
 
             Tracer tracer = configuration.getTracer();
             servletContext.setAttribute("tracer", tracer);
+            GlobalTracer.register(tracer);
 
             LOG.info("OpenTracing extension successfully initialized.");
         } else {
