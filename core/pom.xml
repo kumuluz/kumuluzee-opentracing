@@ -143,9 +143,9 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${surefire.plugin.version}</version>
                 <configuration>
-                    <dependenciesToScan>
-                        <dependency>org.eclipse.microprofile.opentracing:microprofile-opentracing-tck</dependency>
-                    </dependenciesToScan>
+                    <suiteXmlFiles>
+                        <suiteXmlFile>tck-suite.xml</suiteXmlFile>
+                    </suiteXmlFiles>
                 </configuration>
             </plugin>
         </plugins>
