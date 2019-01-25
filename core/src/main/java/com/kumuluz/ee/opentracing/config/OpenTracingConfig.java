@@ -66,6 +66,9 @@ public class OpenTracingConfig {
     public Pattern getSkipPattern() {
         Optional<String> skipPattern = ConfigProvider.getConfig()
                 .getOptionalValue(MP_CONFIG_PREFIX + "server.skip-pattern", String.class);
-        return Pattern.compile(skipPattern.orElse("/health|/metrics.*|/openapi"));
+
+        String alwaysSkip = "/health|/metrics|/metrics/base/.*|/metrics/vendor/.*|/metrics/application/.*|/openapi";
+        String pattern = alwaysSkip + (skipPattern.isPresent() ? "|" : "") + skipPattern.orElse("");
+        return Pattern.compile(pattern);
     }
 }
