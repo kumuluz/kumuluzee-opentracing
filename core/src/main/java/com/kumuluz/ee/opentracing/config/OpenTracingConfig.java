@@ -26,8 +26,6 @@ package com.kumuluz.ee.opentracing.config;
 
 import com.kumuluz.ee.common.runtime.EeRuntime;
 import com.kumuluz.ee.configuration.utils.ConfigurationUtil;
-import com.kumuluz.ee.opentracing.utils.CommonUtil;
-import org.eclipse.microprofile.config.ConfigProvider;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.Optional;
@@ -58,14 +56,14 @@ public class OpenTracingConfig {
     }
 
     public String getSelectedOperationNameProvider() {
-        return ConfigProvider.getConfig()
-            .getOptionalValue(MP_CONFIG_PREFIX + "server.operation-name-provider", String.class)
+        return ConfigurationUtil.getInstance()
+            .get(MP_CONFIG_PREFIX + "server.operation-name-provider")
             .orElse("class-method");
     }
 
     public Pattern getSkipPattern() {
-        Optional<String> skipPattern = ConfigProvider.getConfig()
-                .getOptionalValue(MP_CONFIG_PREFIX + "server.skip-pattern", String.class);
+        Optional<String> skipPattern = ConfigurationUtil.getInstance()
+                .get(MP_CONFIG_PREFIX + "server.skip-pattern");
         return Pattern.compile(skipPattern.orElse("/health|/metrics.*|/openapi"));
     }
 }

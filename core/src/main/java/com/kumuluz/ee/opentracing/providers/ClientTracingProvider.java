@@ -29,7 +29,6 @@ import com.kumuluz.ee.opentracing.filters.OpenTracingClientResponseFilter;
 import io.opentracing.Tracer;
 import io.opentracing.contrib.concurrent.TracedExecutorService;
 import org.eclipse.microprofile.opentracing.ClientTracingRegistrarProvider;
-import org.glassfish.jersey.client.JerseyClientBuilder;
 
 import javax.enterprise.inject.spi.CDI;
 import javax.ws.rs.client.ClientBuilder;
@@ -50,8 +49,7 @@ public class ClientTracingProvider implements ClientTracingRegistrarProvider {
     @Override
     public ClientBuilder configure(ClientBuilder clientBuilder, ExecutorService executorService) {
         Tracer tracer = CDI.current().select(Tracer.class).get();
-        JerseyClientBuilder jerseyClientBuilder = (JerseyClientBuilder) clientBuilder;
-        return jerseyClientBuilder
+        return clientBuilder
                 .register(new OpenTracingClientRequestFilter(tracer))
                 .register(new OpenTracingClientResponseFilter())
                 .executorService(new TracedExecutorService(executorService, tracer));

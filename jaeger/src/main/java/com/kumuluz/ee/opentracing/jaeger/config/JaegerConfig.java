@@ -25,10 +25,10 @@
 package com.kumuluz.ee.opentracing.jaeger.config;
 
 
-import org.eclipse.microprofile.config.inject.ConfigProperty;
+import com.kumuluz.ee.configuration.cdi.ConfigBundle;
+import com.kumuluz.ee.configuration.cdi.ConfigValue;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import java.util.Optional;
 
 /**
@@ -39,136 +39,183 @@ import java.util.Optional;
  * @since 1.0.0
  */
 @ApplicationScoped
+@ConfigBundle("kumuluzee.opentracing.jaeger")
 public class JaegerConfig {
 
-    private static final String JAEGER_CONFIG = "kumuluzee.opentracing.jaeger.";
+    @ConfigValue("service-name")
+    private String serviceName;
 
-    @Inject
-    @ConfigProperty(name = JAEGER_CONFIG + "service-name")
-    private Optional<String> serviceName;
+    @ConfigValue("agent-host")
+    private String agentHost;
 
-    @Inject
-    @ConfigProperty(name = JAEGER_CONFIG + "agent-host")
-    private Optional<String> agentHost;
+    @ConfigValue("agent-port")
+    private Integer agentPort;
 
-    @Inject
-    @ConfigProperty(name = JAEGER_CONFIG + "agent-port")
-    private Optional<Integer> agentPort;
+    @ConfigValue("endpoint")
+    private String endpoint;
 
-    @Inject
-    @ConfigProperty(name = JAEGER_CONFIG + "endpoint")
-    private Optional<String> endpoint;
+    @ConfigValue("auth-token")
+    private String authToken;
 
-    @Inject
-    @ConfigProperty(name = JAEGER_CONFIG + "auth-token")
-    private Optional<String> authToken;
+    @ConfigValue("username")
+    private String username;
 
-    @Inject
-    @ConfigProperty(name = JAEGER_CONFIG + "username")
-    private Optional<String> username;
+    @ConfigValue("password")
+    private String password;
 
-    @Inject
-    @ConfigProperty(name = JAEGER_CONFIG + "password")
-    private Optional<String> password;
+    @ConfigValue("reporter.log-spans")
+    private Boolean logSpans;
 
-    @Inject
-    @ConfigProperty(name = JAEGER_CONFIG + "reporter.log-spans")
-    private Optional<Boolean> logSpans;
+    @ConfigValue("reporter.max-queue-size")
+    private Integer maxQueueSize;
 
-    @Inject
-    @ConfigProperty(name = JAEGER_CONFIG + "reporter.max-queue-size")
-    private Optional<Integer> maxQueueSize;
+    @ConfigValue("reporter.flush-interval")
+    private Integer flushInterval;
 
-    @Inject
-    @ConfigProperty(name = JAEGER_CONFIG + "reporter.flush-interval")
-    private Optional<Integer> flushInterval;
+    @ConfigValue("tags")
+    private String tags;
 
-    @Inject
-    @ConfigProperty(name = JAEGER_CONFIG + "tags")
-    private Optional<String> tags;
+    @ConfigValue("sampler.type")
+    private String samplerType;
 
-    @Inject
-    @ConfigProperty(name = JAEGER_CONFIG + "sampler.type")
-    private Optional<String> samplerType;
+    @ConfigValue("sampler.param")
+    private Integer sampleParam;
 
-    @Inject
-    @ConfigProperty(name = JAEGER_CONFIG + "sampler.param")
-    private Optional<Integer> sampleParam;
+    @ConfigValue("sampler.manager-host-port")
+    private String samplerHostPort;
 
-    @Inject
-    @ConfigProperty(name = JAEGER_CONFIG + "sampler.manager-host-port")
-    private Optional<String> samplerHostPort;
+    @ConfigValue("propagation")
+    private String propagation;
 
-    @Inject
-    @ConfigProperty(name = JAEGER_CONFIG + "propagation")
-    private Optional<String> propagation;
-
-    @Inject
-    @ConfigProperty(name = JAEGER_CONFIG + "traceid-128bit")
-    private Optional<Boolean> useTraceId128Bit;
+    @ConfigValue("traceid-128bit")
+    private Boolean useTraceId128Bit;
 
 
     public String getServiceName() {
-        return serviceName.orElse(null);
+        return serviceName;
     }
 
     public String getAgentHost() {
-        return agentHost.orElse("localhost");
+        return Optional.ofNullable(agentHost).orElse("localhost");
     }
 
     public Integer getAgentPort() {
-        return agentPort.orElse(5775);
+        return Optional.ofNullable(agentPort).orElse(5775);
     }
 
     public String getEndpoint() {
-        return endpoint.orElse(null);
+        return endpoint;
     }
 
     public String getAuthToken() {
-        return authToken.orElse(null);
+        return authToken;
     }
 
     public String getUsername() {
-        return username.orElse(null);
+        return username;
     }
 
     public String getPassword() {
-        return password.orElse(null);
+        return password;
     }
 
     public Boolean getLogSpans() {
-        return logSpans.orElse(null);
+        return logSpans;
     }
 
     public Integer getMaxQueueSize() {
-        return maxQueueSize.orElse(null);
+        return maxQueueSize;
     }
 
     public Integer getFlushInterval() {
-        return flushInterval.orElse(null);
+        return flushInterval;
     }
 
     public String getTags() {
-        return tags.orElse(null);
+        return tags;
     }
 
     public String getSamplerType() {
-        return samplerType.orElse("const");
+        return Optional.ofNullable(samplerType).orElse("const");
     }
 
     public Integer getSampleParam() {
-        return sampleParam.orElse(1);
+        return Optional.ofNullable(sampleParam).orElse(1);
     }
 
     public String getSamplerHostPort() {
-        return samplerHostPort.orElse(null);
+        return samplerHostPort;
     }
 
     public String getPropagation() {
-        return propagation.orElse(null);
+        return propagation;
     }
 
     public Boolean getUseTraceId128Bit() {
-        return useTraceId128Bit.orElse(null);
+        return useTraceId128Bit;
+    }
+
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
+    }
+
+    public void setAgentHost(String agentHost) {
+        this.agentHost = agentHost;
+    }
+
+    public void setAgentPort(Integer agentPort) {
+        this.agentPort = agentPort;
+    }
+
+    public void setEndpoint(String endpoint) {
+        this.endpoint = endpoint;
+    }
+
+    public void setAuthToken(String authToken) {
+        this.authToken = authToken;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setLogSpans(Boolean logSpans) {
+        this.logSpans = logSpans;
+    }
+
+    public void setMaxQueueSize(Integer maxQueueSize) {
+        this.maxQueueSize = maxQueueSize;
+    }
+
+    public void setFlushInterval(Integer flushInterval) {
+        this.flushInterval = flushInterval;
+    }
+
+    public void setTags(String tags) {
+        this.tags = tags;
+    }
+
+    public void setSamplerType(String samplerType) {
+        this.samplerType = samplerType;
+    }
+
+    public void setSampleParam(Integer sampleParam) {
+        this.sampleParam = sampleParam;
+    }
+
+    public void setSamplerHostPort(String samplerHostPort) {
+        this.samplerHostPort = samplerHostPort;
+    }
+
+    public void setPropagation(String propagation) {
+        this.propagation = propagation;
+    }
+
+    public void setUseTraceId128Bit(Boolean useTraceId128Bit) {
+        this.useTraceId128Bit = useTraceId128Bit;
     }
 }
