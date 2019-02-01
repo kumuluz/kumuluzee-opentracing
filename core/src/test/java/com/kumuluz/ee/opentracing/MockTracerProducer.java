@@ -28,28 +28,20 @@ import io.opentracing.Tracer;
 import io.opentracing.mock.MockTracer;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.Initialized;
-import javax.enterprise.event.Observes;
-import javax.inject.Inject;
-import javax.servlet.ServletContext;
-import java.util.logging.Logger;
+import javax.enterprise.inject.Produces;
 
 /**
- * Initializes  OpenTracing tracer
+ * Initializes Mock OpenTracing tracer
  * @author Domen Jeric
  * @since 1.0.0
  */
 @ApplicationScoped
-public class MockTracerInitializer {
-    private static final Logger LOG = Logger.getLogger(MockTracerInitializer.class.getName());
+public class MockTracerProducer {
 
-    public void init(@Observes @Initialized(ApplicationScoped.class) Object init) {
-        if (init instanceof ServletContext) {
-            ServletContext servletContext = (ServletContext) init;
-            Tracer tracer = new MockTracer();
-            servletContext.setAttribute("tracer", tracer);
-        } else {
-            LOG.warning("Unable to initialize MockTracer for MicroProfile tests.");
-        }
+    private Tracer tracer = new MockTracer();
+
+    @Produces
+    public Tracer produceTracer() {
+        return tracer;
     }
 }

@@ -43,7 +43,8 @@ public class OpenTracingLibraryAppender extends CachedAuxilliaryArchiveAppender 
 
         return ShrinkWrap.create(JavaArchive.class, "kumuluzee-opentracing.jar")
                 .addPackages(true, OpenTracingExtension.class.getPackage())
-                .addClass(MockTracerInitializer.class)
+                .deleteClass(TracerProducer.class)
+                .addClass(MockTracerProducer.class)
                 .addAsServiceProvider(com.kumuluz.ee.common.Extension.class, OpenTracingExtension.class)
                 .addAsServiceProvider(org.eclipse.microprofile.opentracing.ClientTracingRegistrarProvider.class, ClientTracingProvider.class)
                 .addAsResource("META-INF/beans.xml");

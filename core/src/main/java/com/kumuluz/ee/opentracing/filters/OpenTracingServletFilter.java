@@ -58,7 +58,7 @@ public class OpenTracingServletFilter implements Filter {
             Span span = (Span) request.getAttribute(CommonUtil.OPENTRACING_SPAN_TITLE);
 
             if (span == null) {
-                return;
+                throw e;
             }
 
             HttpServletResponse httpResponse = (HttpServletResponse) response;
@@ -70,6 +70,8 @@ public class OpenTracingServletFilter implements Filter {
             }
 
             span.finish();
+
+            throw e;
         }
     }
 

@@ -40,9 +40,6 @@ import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
 import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.core.Response;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 /**
@@ -56,15 +53,13 @@ import java.util.regex.Pattern;
 public class TracedInterceptor {
 
     @Inject
-    OpenTracingConfig tracerConfig;
+    private OpenTracingConfig tracerConfig;
 
     @Inject
-    OperationNameUtil operationNameUtil;
+    private OperationNameUtil operationNameUtil;
 
     @Inject
-    Tracer tracer;
-
-    private static final Logger LOG = Logger.getLogger(TracedInterceptor.class.getName());
+    private Tracer tracer;
 
     @AroundInvoke
     public Object trace(InvocationContext context) throws Exception {
@@ -80,21 +75,14 @@ public class TracedInterceptor {
         Span parentSpan = tracer.activeSpan();
         String operationName = operationNameUtil.operationNameExplicitTracing(requestContext, context);
 
-        try (Scope scope = tracer.buildSpan(operationName).asChildOf(parentSpan).startActive(true)){
-
-            Object toReturn = null;
+        try (Scope scope = tracer.buildSpan(operationName).asChildOf(parentSpan).startActive(true)) {
 
             try {
-                toReturn = context.proceed();
+                return context.proceed();
             } catch (Exception e) {
                 SpanErrorLogger.addExceptionLogs(scope.span(), e);
+                throw e;
             }
-
-            return toReturn;
-        } catch(Exception exception) {
-            LOG.log(Level.SEVERE,"Exception occured when trying to create method span.", exception);
         }
-
-        return context.proceed();
     }
 }

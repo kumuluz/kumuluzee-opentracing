@@ -26,11 +26,10 @@ package com.kumuluz.ee.opentracing;
 
 
 import io.opentracing.Tracer;
+import io.opentracing.util.GlobalTracer;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
-import javax.inject.Inject;
-import javax.servlet.ServletContext;
 
 /**
  * OpenTracing Tracer producer
@@ -40,11 +39,9 @@ import javax.servlet.ServletContext;
  */
 @ApplicationScoped
 public class TracerProducer {
-    @Inject
-    private ServletContext servletContext;
 
     @Produces
     public Tracer produceTracer() {
-        return (Tracer) servletContext.getAttribute("tracer");
+        return GlobalTracer.get();
     }
 }
