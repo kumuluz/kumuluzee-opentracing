@@ -10,10 +10,6 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <properties>
-        <jaegertracing.version>0.31.0</jaegertracing.version>
-    </properties>
-
     <artifactId>kumuluzee-opentracing-jaeger</artifactId>
 
     <name>KumuluzEE OpenTracing Jaeger</name>
