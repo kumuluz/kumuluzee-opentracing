@@ -39,8 +39,8 @@
         <microprofile-opentracing.version>1.2.1</microprofile-opentracing.version>
         <opentracing.version>0.31.0</opentracing.version>
         <opentracing-concurrent.version>0.2.0</opentracing-concurrent.version>
-        <jaeger.version>0.32.0</jaeger.version>
-        <zipkin-sender-urlconnection.version>2.7.10</zipkin-sender-urlconnection.version>
+        <jaeger.version>0.33.1</jaeger.version>
+        <zipkin-sender-urlconnection.version>2.7.14</zipkin-sender-urlconnection.version>
 
         <kumuluzee-arquillian-container.version>1.1.0</kumuluzee-arquillian-container.version>
         <testng.version>6.9.9</testng.version>
