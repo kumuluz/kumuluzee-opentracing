@@ -79,7 +79,7 @@ public class OperationNameUtil {
         }
 
         if (operationNameProvider != null && operationNameProvider.equals("http-path")) {
-            return this.operationNameHttpPath(requestContext);
+            return this.operationNameHttpPath(requestContext, clazz, method);
         }
         return this.operationNameClassMethod(requestContext, clazz, method);
     }
@@ -92,20 +92,27 @@ public class OperationNameUtil {
         return requestContext.getMethod() + ":" + clazz.getName() + "." + method.getName();
     }
 
-    private String operationNameHttpPath(ContainerRequestContext requestContext) {
-        MultivaluedMap<String, String> pathParams = requestContext.getUriInfo().getPathParameters();
-        String path = requestContext.getUriInfo().getPath();
+    private String operationNameHttpPath(ContainerRequestContext requestContext, Class<?> clazz, Method method) {
+        String classPath = this.getPathString(clazz.getAnnotation(Path.class));
+        String methodPath = this.getPathString(method.getAnnotation(Path.class));
 
-        for (String param : pathParams.keySet()) {
-            List<String> values = pathParams.get(param);
-            String wildCardParam = String.format("/{%s}", param);
-
-            for (String value : values) {
-                path = path.replace("/" + value, wildCardParam);
-            }
+        if (classPath.startsWith("/")) {
+            classPath = classPath.substring(1, classPath.length());
         }
 
-        return requestContext.getMethod() + ":/" + path;
+        if (!classPath.endsWith("/")) {
+            classPath = classPath + "/";
+        }
+
+        if (methodPath.startsWith("/")) {
+            methodPath = methodPath.substring(1, methodPath.length());
+        }
+
+        return requestContext.getMethod() + ":/" + classPath + methodPath;
+    }
+
+    private String getPathString(Path path) {
+        return (path != null) ? path.value() : "";
     }
 
 }
