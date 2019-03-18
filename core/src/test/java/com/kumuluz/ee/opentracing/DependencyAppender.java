@@ -47,6 +47,7 @@ public class DependencyAppender implements MavenDependencyAppender {
 
         libs.add("com.kumuluz.ee:kumuluzee-jax-rs-jersey:");
         libs.add("com.kumuluz.ee:kumuluzee-cdi-weld:");
+        libs.add("com.kumuluz.ee:kumuluzee-json-p-jsonp:");
         libs.add("io.opentracing:opentracing-util:"  +
                 versionsBundle.getString("opentracing-version"));
         libs.add("io.opentracing:opentracing-api:" +
@@ -57,6 +58,8 @@ public class DependencyAppender implements MavenDependencyAppender {
                 versionsBundle.getString("microprofile-opentracing-version"));
         libs.add("com.kumuluz.ee.config:kumuluzee-config-mp:" +
                 versionsBundle.getString("kumuluzee-config-mp.version"));
+        libs.add("com.kumuluz.ee.rest-client:kumuluzee-rest-client:" +
+                versionsBundle.getString("microprofile-rest-client-version"));
         libs.add("io.opentracing.contrib:opentracing-concurrent:" +
                 versionsBundle.getString("opentracing-concurrent.version"));
         libs.add("javax.xml.bind:jaxb-api:" +

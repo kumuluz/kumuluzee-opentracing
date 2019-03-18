@@ -21,34 +21,40 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
 package com.kumuluz.ee.opentracing;
 
-import com.kumuluz.ee.opentracing.providers.ClientTracingProvider;
-import org.eclipse.microprofile.rest.client.spi.RestClientListener;
-import org.jboss.arquillian.container.test.spi.client.deployment.CachedAuxilliaryArchiveAppender;
+
+import org.eclipse.microprofile.opentracing.tck.application.TestWebServicesApplication;
+import org.eclipse.microprofile.opentracing.tck.rest.client.RestClientApplication;
+import org.jboss.arquillian.container.test.spi.client.deployment.ApplicationArchiveProcessor;
+import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 
 /**
- * Packages KumuluzEE OpenTracing library as a ShrinkWrap archive and adds it to deployments.
+ * Adds appropriate web.xml to deployments. TCK apps do not have provider discovery enabled, so we explicitly register
+ * required providers in web.xml.
  *
- * @author Urban Malc
  * @author Domen Jeric
  * @since 1.0.0
  */
-public class OpenTracingLibraryAppender extends CachedAuxilliaryArchiveAppender {
+public class OpenTracingArchiveProcessor implements ApplicationArchiveProcessor {
 
     @Override
-    protected Archive<?> buildArchive() {
+    public void process(Archive<?> archive, TestClass testClass) {
+        WebArchive war = archive.as(WebArchive.class);
+        if (isNonRestClientDeployment(war)) {
+            war.deleteClass(RestClientApplication.class);
+            war.addAsWebInfResource("WEB-INF/web.xml");
+        } else {
+            war.addAsWebInfResource("WEB-INF/web-rc.xml", "web.xml");
+        }
+    }
 
-        return ShrinkWrap.create(JavaArchive.class, "kumuluzee-opentracing.jar")
-                .addPackages(true, OpenTracingExtension.class.getPackage())
-                .deleteClass(TracerProducer.class)
-                .addClass(MockTracerProducer.class)
-                .addAsServiceProvider(com.kumuluz.ee.common.Extension.class, OpenTracingExtension.class)
-                .addAsServiceProvider(org.eclipse.microprofile.opentracing.ClientTracingRegistrarProvider.class, ClientTracingProvider.class)
-                .addAsServiceProvider(RestClientListener.class, com.kumuluz.ee.opentracing.restclient.RestClientListener.class)
-                .addAsResource("META-INF/beans.xml");
+    private boolean isNonRestClientDeployment(WebArchive war) {
+        return war.contains("/WEB-INF/classes/" +
+                TestWebServicesApplication.class.getName().replace(".", "/") +
+                ".class");
     }
 }

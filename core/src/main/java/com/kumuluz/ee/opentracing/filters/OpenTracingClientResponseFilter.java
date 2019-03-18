@@ -41,7 +41,8 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
- * Jax-rs Client response filter
+ * JAX-RS Client response filter that finishes spans
+ *
  * @author Domen Jeric
  * @since 1.0.0
  */
@@ -57,6 +58,12 @@ public class OpenTracingClientResponseFilter implements ClientResponseFilter {
         try {
 
             Span span = (Span) requestContext.getProperty(CommonUtil.OPENTRACING_SPAN_TITLE);
+
+            if (span == null) {
+                // no span to finish
+                return;
+            }
+
             span.setTag(Tags.HTTP_STATUS.getKey(), responseContext.getStatus());
 
             if (responseContext.getStatus() >= 400) {

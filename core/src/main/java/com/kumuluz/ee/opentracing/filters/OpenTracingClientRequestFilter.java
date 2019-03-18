@@ -30,18 +30,21 @@ import io.opentracing.Span;
 import io.opentracing.Tracer;
 import io.opentracing.propagation.Format;
 import io.opentracing.tag.Tags;
+import org.eclipse.microprofile.opentracing.Traced;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.ext.Provider;
+import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Jax-rs Client request filter
+ * JAX-RS Client request filter that starts tracing span.
+ *
  * @author Domen Jeric
  * @since 1.0.0
  */
@@ -65,6 +68,14 @@ public class OpenTracingClientRequestFilter implements ClientRequestFilter {
     public void filter(ClientRequestContext requestContext) {
         try {
             URI uri = requestContext.getUri();
+
+            Object prop = requestContext.getProperty("org.eclipse.microprofile.rest.client.invokedMethod");
+            if (prop instanceof Method) {
+                Traced traced = ((Method) prop).getAnnotation(Traced.class);
+                if (traced != null && !traced.value()) {
+                    return;
+                }
+            }
 
             Tracer.SpanBuilder spanBuilder = tracer.buildSpan(requestContext.getMethod())
                     .ignoreActiveSpan()

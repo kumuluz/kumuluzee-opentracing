@@ -40,6 +40,6 @@ public class OpenTracingArquillianExtension implements LoadableExtension {
     public void register(ExtensionBuilder extensionBuilder) {
         extensionBuilder
                 .service(AuxiliaryArchiveAppender.class, OpenTracingLibraryAppender.class)
-                .service(ApplicationArchiveProcessor.class, WebInfProcessor.class);
+                .service(ApplicationArchiveProcessor.class, OpenTracingArchiveProcessor.class);
     }
 }

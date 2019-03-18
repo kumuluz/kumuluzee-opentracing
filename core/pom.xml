@@ -44,6 +44,11 @@
             <artifactId>microprofile-opentracing-api</artifactId>
             <version>${microprofile-opentracing.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.eclipse.microprofile.rest.client</groupId>
+            <artifactId>microprofile-rest-client-api</artifactId>
+            <version>${microprofile-rest-client.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>io.opentracing</groupId>
@@ -73,6 +78,12 @@
         <dependency>
             <groupId>org.eclipse.microprofile.opentracing</groupId>
             <artifactId>microprofile-opentracing-tck</artifactId>
+            <version>${microprofile-opentracing.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.microprofile.opentracing</groupId>
+            <artifactId>microprofile-opentracing-tck-rest-client</artifactId>
             <version>${microprofile-opentracing.version}</version>
             <scope>test</scope>
         </dependency>

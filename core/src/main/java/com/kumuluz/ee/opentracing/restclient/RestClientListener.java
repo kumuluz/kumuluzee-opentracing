@@ -21,37 +21,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
-package com.kumuluz.ee.opentracing.providers;
+package com.kumuluz.ee.opentracing.restclient;
 
 import com.kumuluz.ee.opentracing.filters.OpenTracingClientRequestFilter;
 import com.kumuluz.ee.opentracing.filters.OpenTracingClientResponseFilter;
 import com.kumuluz.ee.opentracing.utils.ExecutorUtil;
 import io.opentracing.Tracer;
 import io.opentracing.contrib.concurrent.TracedExecutorService;
-import org.eclipse.microprofile.opentracing.ClientTracingRegistrarProvider;
+import org.eclipse.microprofile.opentracing.Traced;
+import org.eclipse.microprofile.rest.client.RestClientBuilder;
 
 import javax.enterprise.inject.spi.CDI;
-import javax.ws.rs.client.ClientBuilder;
-import java.util.concurrent.ExecutorService;
 
 /**
- * Client tracing provider
- * @author Domen Kajdic
- * @since 1.0.0
+ * Configures MicroProfile Rest Client with tracing support.
+ *
+ * @author Urban Malc
+ * @since 1.3.0
  */
-public class ClientTracingProvider implements ClientTracingRegistrarProvider {
-    @Override
-    public ClientBuilder configure(ClientBuilder clientBuilder) {
-        return configure(clientBuilder, ExecutorUtil.getInstance().getExecutorService());
-    }
+public class RestClientListener implements org.eclipse.microprofile.rest.client.spi.RestClientListener {
 
     @Override
-    public ClientBuilder configure(ClientBuilder clientBuilder, ExecutorService executorService) {
+    public void onNewClient(Class<?> serviceInterface, RestClientBuilder builder) {
+        Traced traced = serviceInterface.getAnnotation(Traced.class);
+
         Tracer tracer = CDI.current().select(Tracer.class).get();
-        return clientBuilder
-                .register(new OpenTracingClientRequestFilter(tracer))
-                .register(new OpenTracingClientResponseFilter())
-                .executorService(new TracedExecutorService(executorService, tracer));
+
+        if (traced == null || traced.value()) {
+            builder.register(new OpenTracingClientRequestFilter(tracer));
+            builder.register(OpenTracingClientResponseFilter.class);
+            builder.executorService(new TracedExecutorService(ExecutorUtil.getInstance().getExecutorService(), tracer));
+        }
     }
 }

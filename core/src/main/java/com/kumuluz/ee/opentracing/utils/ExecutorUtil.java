@@ -21,25 +21,42 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+package com.kumuluz.ee.opentracing.utils;
 
-package com.kumuluz.ee.opentracing;
-
-
-import org.jboss.arquillian.container.test.spi.client.deployment.ApplicationArchiveProcessor;
-import org.jboss.arquillian.test.spi.TestClass;
-import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.spec.WebArchive;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
- * WEB-INF processor
- * @author Domen Jeric
- * @since 1.0.0
+ * Singleton providing a thread pool for traced executor services.
+ *
+ * @author Urban Malc
+ * @since 1.3.0
  */
-public class WebInfProcessor implements ApplicationArchiveProcessor {
+public class ExecutorUtil {
 
-    @Override
-    public void process(Archive<?> archive, TestClass testClass) {
-        WebArchive war = archive.as(WebArchive.class);
-        war.addAsWebInfResource("WEB-INF/web.xml");
+    private static ExecutorUtil instance = null;
+
+    private ExecutorService executorService;
+
+    private ExecutorUtil() {
+        executorService = Executors.newFixedThreadPool(10);
+    }
+
+    public static ExecutorUtil getInstance() {
+        if (instance == null) {
+            initialize();
+        }
+
+        return instance;
+    }
+
+    private static synchronized void initialize() {
+        if (instance == null) {
+            instance = new ExecutorUtil();
+        }
+    }
+
+    public ExecutorService getExecutorService() {
+        return executorService;
     }
 }
