@@ -106,6 +106,8 @@ Client httpClient = ClientTracingRegistrar.configure(ClientBuilder.newBuilder())
 For more in-depth specification and configuration options
 please refer to [MicroProfile-OpenTracing (MP-OT)](https://github.com/eclipse/microprofile-opentracing).
 
+When using [KumuluzEE Rest Client](https://github.com/kumuluz/kumuluzee-rest-client) version 1.2.1 or above tracing is
+automatically enabled for all Rest Clients. To disable tracing add `@Traced(false)` annotation on interface or method.
 
 ## Changelog
 
