@@ -70,8 +70,6 @@ public class OpenTracingClientResponseFilter implements ClientResponseFilter {
             if (responseContext.getStatus() >= 400) {
                 InputStream responseInputStream = responseContext.getEntityStream();
 
-                responseInputStream.mark(0);
-
                 String entity = new BufferedReader(new InputStreamReader(responseInputStream))
                         .lines()
                         .collect(Collectors.joining("\n"));
