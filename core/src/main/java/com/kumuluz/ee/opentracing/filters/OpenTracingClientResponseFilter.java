@@ -35,6 +35,7 @@ import javax.ws.rs.client.ClientResponseContext;
 import javax.ws.rs.client.ClientResponseFilter;
 import javax.ws.rs.ext.Provider;
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -67,9 +68,14 @@ public class OpenTracingClientResponseFilter implements ClientResponseFilter {
             span.setTag(Tags.HTTP_STATUS.getKey(), responseContext.getStatus());
 
             if (responseContext.getStatus() >= 400) {
-                String entity = new BufferedReader(new InputStreamReader(responseContext.getEntityStream()))
+                InputStream responseInputStream = responseContext.getEntityStream();
+
+                String entity = new BufferedReader(new InputStreamReader(responseInputStream))
                         .lines()
                         .collect(Collectors.joining("\n"));
+
+                responseInputStream.reset();
+
                 SpanErrorLogger.addExceptionLogs(span, entity);
             }
 
