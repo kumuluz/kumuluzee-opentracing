@@ -74,14 +74,16 @@ public class TracedInterceptor {
 
         Span parentSpan = tracer.activeSpan();
         String operationName = operationNameUtil.operationNameExplicitTracing(requestContext, context);
+        Span childSpan = tracer.buildSpan(operationName).asChildOf(parentSpan).start();
 
-        try (Scope scope = tracer.buildSpan(operationName).asChildOf(parentSpan).startActive(true)) {
-
+        try (Scope ignored = tracer.activateSpan(childSpan)) {
             try {
                 return context.proceed();
             } catch (Exception e) {
-                SpanErrorLogger.addExceptionLogs(scope.span(), e);
+                SpanErrorLogger.addExceptionLogs(childSpan, e);
                 throw e;
+            } finally {
+                childSpan.finish();
             }
         }
     }

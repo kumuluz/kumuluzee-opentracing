@@ -28,6 +28,7 @@ package com.kumuluz.ee.opentracing.filters;
 import com.kumuluz.ee.opentracing.adapters.ServerHeaderExtractAdapter;
 import com.kumuluz.ee.opentracing.config.OpenTracingConfig;
 import com.kumuluz.ee.opentracing.utils.*;
+import io.opentracing.Span;
 import io.opentracing.SpanContext;
 import io.opentracing.Tracer;
 import io.opentracing.propagation.Format;
@@ -99,8 +100,9 @@ public class OpenTracingServerRequestFilter implements ContainerRequestFilter {
                             requestContext.getUriInfo().getRequestUri().toString())
                     .withTag(Tags.COMPONENT.getKey(), "jaxrs");
 
-            requestContext.setProperty(CommonUtil.OPENTRACING_SPAN_TITLE,
-                    spanBuilder.startActive(true).span());
+            Span span = spanBuilder.start();
+            tracer.activateSpan(span);
+            requestContext.setProperty(CommonUtil.OPENTRACING_SPAN_TITLE, span);
 
         } catch(Exception exception) {
             LOG.log(Level.SEVERE,"Exception occured when trying to start server span.", exception);
